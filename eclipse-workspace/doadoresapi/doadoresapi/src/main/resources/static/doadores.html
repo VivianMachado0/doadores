@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Doadores</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #28a745;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        input, select, button {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+        button {
+            background: #28a745;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #218838;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+            font-size: 14px;
+        }
+        th {
+            background: #f7f7f7;
+        }
+        @media (max-width: 600px) {
+            .filters {
+                flex-direction: column;
+            }
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+            th {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+            td {
+                position: relative;
+                padding-left: 50%;
+                margin-bottom: 10px;
+            }
+            td:before {
+                content: attr(data-label);
+                position: absolute;
+                left: 10px;
+                font-weight: bold;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    Lista de Doadores
+</header>
+
+<div class="container">
+    <div class="filters">
+        <select id="tipoSanguineo">
+            <option value="">Tipo Sanguíneo</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+        </select>
+        <input type="text" id="cidade" placeholder="Cidade">
+        <button onclick="buscar()">Buscar</button>
+        <button onclick="listar()">Listar Todos</button>
+    </div>
+
+    <table id="tabela">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>CPF</th>
+                <th>Tipo</th>
+                <th>Cidade</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script>
+    const tabela = document.querySelector('#tabela tbody');
+
+    function renderizar(dados) {
+        tabela.innerHTML = '';
+        if (dados.length === 0) {
+            tabela.innerHTML = '<tr><td colspan="5">Nenhum doador encontrado.</td></tr>';
+            return;
+        }
+        dados.forEach(doador => {
+            const row = `<tr>
+                <td data-label="Nome">${doador.nome}</td>
+                <td data-label="CPF">${doador.cpf}</td>
+                <td data-label="Tipo">${doador.tipoSanguineo}</td>
+                <td data-label="Cidade">${doador.cidade}</td>
+                <td data-label="Email">${doador.email}</td>
+            </tr>`;
+            tabela.insertAdjacentHTML('beforeend', row);
+        });
+    }
+
+    async function listar() {
+        try {
+            const res = await fetch('https://doadores-spring.onrender.com/doadores');
+            const dados = await res.json();
+            renderizar(dados);
+        } catch (err) {
+            alert('Erro ao listar doadores.');
+        }
+    }
+
+    async function buscar() {
+        const tipo = document.getElementById('tipoSanguineo').value;
+        const cidade = document.getElementById('cidade').value.trim();
+
+        if (!tipo && !cidade) {
+            alert('Informe ao menos um filtro.');
+            return;
+        }
+
+        try {
+            const url = new URL('https://doadores-spring.onrender.com/doadores/buscar');
+            if (tipo) url.searchParams.append('tipoSanguineo', tipo);
+            if (cidade) url.searchParams.append('cidade', cidade);
+
+            const res = await fetch(url);
+            const dados = await res.json();
+            renderizar(dados);
+        } catch (err) {
+            alert('Erro ao buscar doadores.');
+        }
+    }
+
+    // Carrega todos ao abrir
+    listar();
+</script>
+
+</body>
+</html>
