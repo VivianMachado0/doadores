@@ -1,5 +1,6 @@
 # Etapa 1 - Build
-FROM maven:3.8.7-openjdk-8 AS build
+FROM maven:3.8.7-jdk-8 AS build
+
 WORKDIR /app
 
 # Copia só os arquivos de configuração para aproveitar cache do Docker em builds futuros
