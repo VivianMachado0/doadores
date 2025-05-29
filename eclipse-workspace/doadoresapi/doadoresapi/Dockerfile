@@ -10,17 +10,16 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Etapa 2 - Runtime
-FROM openjdk:17-jdk-alpine  # Mude para Java 17 (versão mais compatível)
+FROM openjdk:8-jdk-alpine
 WORKDIR /app
+
+# Copia o jar gerado na etapa de build
 COPY --from=build /app/target/doadoresapi-0.0.1-SNAPSHOT.jar doadoresapi.jar
 
-# Adicione estas variáveis para garantir que o Spring use as ENV do Render
-ENV SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
-ENV SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
-ENV SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+# Defina a porta padrão
 ENV PORT=8080
 
 EXPOSE 8080
 
 # Comando modificado para aceitar variáveis de ambiente
-CMD ["sh", "-c", "java -Dserver.port=$PORT -jar doadoresapi.jar"]
+CMD ["sh", "-c", "java -Dserver.port=${PORT} -jar doadoresapi.jar"]
