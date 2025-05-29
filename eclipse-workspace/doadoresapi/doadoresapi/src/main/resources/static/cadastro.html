@@ -138,7 +138,7 @@
         	    tipoSanguineo: form.tipoSanguineo.value
         	};
 
-        fetch('http://localhost:8080/doadores', {
+        fetch('https://doadores-spring.onrender.com/doadores', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(data)
