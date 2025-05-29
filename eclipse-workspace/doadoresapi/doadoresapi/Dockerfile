@@ -8,7 +8,7 @@ ENV PORT 8081
 WORKDIR /app
 
 # Copiar o arquivo JAR para dentro do container
-COPY target/doadoresapi.jar /app/doadoresapi.jar
+COPY target/doadoresapi-0.0.1-SNAPSHOT.jar /app/doadoresapi.jar
 
 # Expor a porta 8081
 EXPOSE 8081
