@@ -16,6 +16,7 @@ WORKDIR /app
 # Copia o jar gerado na etapa de build
 COPY --from=build /app/target/doadoresapi-0.0.1-SNAPSHOT.jar doadoresapi.jar
 
-EXPOSE 8081
+EXPOSE 8080
 
-CMD ["java", "-jar", "doadoresapi.jar"]
+CMD ["sh", "-c", "java -Dserver.port=$PORT -jar doadoresapi.jar"]
+
