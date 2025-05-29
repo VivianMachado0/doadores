@@ -1,15 +1,13 @@
 package com.doadorapi.controller;
 
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class HealthController implements HealthIndicator {
+public class HealthController {
     
-    @GetMapping("/health")
-    public Health health() {
-        return Health.up().build();
+    @GetMapping("/health") 
+    public String healthCheck() {
+        return "{\"status\": \"UP\"}";
     }
 }

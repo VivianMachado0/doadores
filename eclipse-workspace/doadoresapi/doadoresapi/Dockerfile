@@ -1,25 +1,16 @@
-# Etapa 1 - Build
-FROM maven:3.6.3-openjdk-8 AS build
+# ... mantém o build ...
 
+# Runtime stage
+FROM openjdk:8-jre-alpine
 WORKDIR /app
+COPY --from=build /app/target/doadoresapi-*.jar app.jar
 
-# Copia só os arquivos de configuração para aproveitar cache do Docker em builds futuros
-COPY pom.xml .
-COPY src ./src
-
-RUN mvn clean package -DskipTests
-
-# Etapa 2 - Runtime
-FROM openjdk:8-jdk-alpine
-WORKDIR /app
-
-# Copia o jar gerado na etapa de build
-COPY --from=build /app/target/doadoresapi-0.0.1-SNAPSHOT.jar doadoresapi.jar
-
-# Defina a porta padrão
+# Define as variáveis OBRIGATÓRIAS
 ENV PORT=8080
+ENV SPRING_DATASOURCE_URL=""
+ENV SPRING_DATASOURCE_USERNAME=""
+ENV SPRING_DATASOURCE_PASSWORD=""
 
 EXPOSE 8080
 
-# Comando modificado para aceitar variáveis de ambiente
-CMD ["sh", "-c", "java -Dserver.port=${PORT} -jar doadoresapi.jar"]
+CMD ["sh", "-c", "java -Dserver.port=${PORT} -Dserver.address=0.0.0.0 -Dspring.datasource.url=\"${SPRING_DATASOURCE_URL}\" -Dspring.datasource.username=\"${SPRING_DATASOURCE_USERNAME}\" -Dspring.datasource.password=\"${SPRING_DATASOURCE_PASSWORD}\" -jar app.jar"]
