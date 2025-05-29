@@ -23,4 +23,4 @@ ENV SPRING_DATASOURCE_PASSWORD=""
 
 EXPOSE 8080
 
-CMD ["sh", "-c", "java -Dserver.port=${PORT} -jar app.jar"]
+CMD ["java", "-Xmx384m", "-Xms256m", "-jar", "/app/app.jar"]
