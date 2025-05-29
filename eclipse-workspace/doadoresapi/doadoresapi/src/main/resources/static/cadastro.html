@@ -155,35 +155,35 @@
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
 
-        const cpf = form.cpf.value;
+        const cpf = form.cpf.value.trim();
 
         try {
-            // 1. Verifica se CPF já está cadastrado
+            // ✅ 1. Verifica se CPF já está cadastrado
             const checkResponse = await fetch(`https://doadores-spring.onrender.com/doadores/cpf/${cpf}`);
 
             if (checkResponse.ok) {
                 const existingDoador = await checkResponse.json();
-                if (existingDoador && existingDoador.id) {  // Ajuste conforme estrutura do seu backend
+                if (existingDoador && existingDoador.id) {  // Ajuste conforme estrutura do backend
                     message.textContent = 'CPF já cadastrado!';
                     message.style.color = 'red';
-                    return;  // Para o fluxo, não cadastra novamente
+                    return;  // ⚠️ Para o fluxo aqui
                 }
             } else if (checkResponse.status !== 404) {
                 throw new Error('Erro ao verificar CPF.');
             }
 
-            // 2. Se não está cadastrado, continua com o cadastro
+            // ✅ 2. Se não está cadastrado, continua com o cadastro
             const data = {
-                nome: form.nome.value,
-                cpf: form.cpf.value,
-                rua: form.rua.value,
-                numero: form.numero.value,
-                bairro: form.bairro.value,
-                cidade: form.cidade.value,
-                estado: form.estado.value,
-                cep: form.cep.value,
-                telefone: form.telefone.value,
-                email: form.email.value,
+                nome: form.nome.value.trim(),
+                cpf: cpf,
+                rua: form.rua.value.trim(),
+                numero: form.numero.value.trim(),
+                bairro: form.bairro.value.trim(),
+                cidade: form.cidade.value.trim(),
+                estado: form.estado.value.trim(),
+                cep: form.cep.value.trim(),
+                telefone: form.telefone.value.trim(),
+                email: form.email.value.trim(),
                 tipoSanguineo: form.tipoSanguineo.value
             };
 
@@ -197,6 +197,9 @@
                 message.textContent = 'Doador cadastrado com sucesso!';
                 message.style.color = 'green';
                 form.reset();
+            } else if (res.status === 409) {
+                message.textContent = 'CPF já cadastrado no servidor!';
+                message.style.color = 'red';
             } else {
                 const errorData = await res.json();
                 throw new Error(errorData.message || 'Erro ao cadastrar');
