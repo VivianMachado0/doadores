@@ -63,5 +63,14 @@ public class DoadorController {
             return repository.findAll();
         }
     }
+    
+ // ✅ BUSCAR DOADOR POR ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Doador> buscarPorId(@PathVariable Long id) {
+        Optional<Doador> doador = repository.findById(id);
+        return doador.map(ResponseEntity::ok)
+                     .orElse(ResponseEntity.notFound().build());
+    }
+
 
 }
