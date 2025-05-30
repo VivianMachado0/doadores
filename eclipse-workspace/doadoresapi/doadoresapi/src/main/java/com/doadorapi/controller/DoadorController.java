@@ -73,4 +73,26 @@ public class DoadorController {
     }
 
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> atualizarDoador(@PathVariable Long id, @RequestBody Doador doadorAtualizado) {
+        return repository.findById(id)
+            .map(doador -> {
+                doador.setNome(doadorAtualizado.getNome());
+                doador.setCpf(doadorAtualizado.getCpf());
+                doador.setRua(doadorAtualizado.getRua());
+                doador.setNumero(doadorAtualizado.getNumero());
+                doador.setBairro(doadorAtualizado.getBairro());
+                doador.setCidade(doadorAtualizado.getCidade());
+                doador.setEstado(doadorAtualizado.getEstado());
+                doador.setCep(doadorAtualizado.getCep());
+                doador.setTelefone(doadorAtualizado.getTelefone());
+                doador.setEmail(doadorAtualizado.getEmail());
+                doador.setTipoSanguineo(doadorAtualizado.getTipoSanguineo());
+
+                repository.save(doador);
+                return ResponseEntity.ok(doador);
+            })
+            .orElse(ResponseEntity.notFound().build());
+    }
+
 }
