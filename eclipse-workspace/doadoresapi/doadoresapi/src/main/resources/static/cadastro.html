@@ -59,6 +59,19 @@
             border: 1px solid #ddd;
             font-size: 14px;
         }
+        .checkbox {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+        }
+        .checkbox input {
+            margin-right: 10px;
+        }
+        .privacy-link {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 12px;
+        }
         button {
             width: 100%;
             padding: 12px;
@@ -89,6 +102,44 @@
                 padding: 15px 0;
             }
         }
+        
+        .modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1000; 
+    left: 0; 
+    top: 0; 
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 500px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    position: relative;
+}
+
+.close {
+    color: #aaa;
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #000;
+}
+        
     </style>
 </head>
 <body>
@@ -142,24 +193,57 @@
                 <option value="O-">O-</option>
             </select>
 
+            <div class="checkbox">
+                <input type="checkbox" id="aceite" required>
+                <label for="aceite">Li e aceito a <a class="privacy-link" href="#politica" onclick="mostrarPolitica()">Política de Privacidade</a></label>
+            </div>
+
             <button type="submit" id="btnSubmit">Cadastrar</button>
             <div class="message" id="message"></div>
         </form>
     </div>
 </div>
 
+<div id="politicaModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="fecharPolitica()">&times;</span>
+    <h2>Política de Privacidade</h2>
+    <p>Coletamos o seu CPF, nome e informações de contato exclusivamente para gerenciar o cadastro de doadores de sangue, evitar cadastros duplicados e garantir a segurança das informações.</p>
+    <p>Seus dados serão armazenados com segurança, não serão compartilhados com terceiros e poderão ser excluídos mediante sua solicitação.</p>
+    <p>Ao marcar o aceite, você concorda com a coleta e o tratamento de seus dados conforme esta Política e a LGPD.</p>
+  </div>
+</div>
+
+
 <script>
     const form = document.getElementById('doadorForm');
     const message = document.getElementById('message');
     const btnSubmit = document.getElementById('btnSubmit');
 
-    // Pega id da URL para edição
     const urlParams = new URLSearchParams(window.location.search);
     const doadorId = urlParams.get('id');
 
     if (doadorId) {
         carregarDoador(doadorId);
         btnSubmit.textContent = 'Atualizar';
+    }
+
+    function mostrarPolitica() {
+        const modal = document.getElementById('politicaModal');
+        modal.style.display = 'block';
+    }
+
+    function fecharPolitica() {
+        const modal = document.getElementById('politicaModal');
+        modal.style.display = 'none';
+    }
+
+    // Fechar ao clicar fora do modal
+    window.onclick = function(event) {
+        const modal = document.getElementById('politicaModal');
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
     }
 
     async function carregarDoador(id) {
@@ -179,7 +263,7 @@
                 form.email.value = doador.email;
                 form.tipoSanguineo.value = doador.tipoSanguineo;
 
-                form.cpf.disabled = true;  // Evitar edição do CPF no update
+                form.cpf.disabled = true;
             } else {
                 message.textContent = 'Erro ao carregar dados.';
                 message.style.color = 'red';
@@ -193,11 +277,17 @@
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
 
+        const aceite = document.getElementById('aceite');
+        if (!aceite.checked) {
+            message.textContent = 'Você deve aceitar a Política de Privacidade para continuar.';
+            message.style.color = 'red';
+            return;
+        }
+
         const cpf = form.cpf.value;
 
         try {
             if (!doadorId) {
-                // Cadastro - Verifica CPF duplicado
                 const checkResponse = await fetch(`https://doadores-spring.onrender.com/doadores/cpf/${cpf}`);
 
                 if (checkResponse.ok) {
@@ -228,14 +318,12 @@
 
             let res;
             if (doadorId) {
-                // Atualiza doador (PUT)
                 res = await fetch(`https://doadores-spring.onrender.com/doadores/${doadorId}`, {
                     method: 'PUT',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(data)
                 });
             } else {
-                // Novo cadastro (POST)
                 res = await fetch('https://doadores-spring.onrender.com/doadores', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
@@ -251,7 +339,6 @@
                 const errorData = await res.json();
                 throw new Error(errorData.message || 'Erro ao enviar dados');
             }
-
         } catch (err) {
             message.textContent = err.message;
             message.style.color = 'red';
