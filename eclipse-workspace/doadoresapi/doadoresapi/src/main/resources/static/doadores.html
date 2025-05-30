@@ -2,8 +2,12 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Doadores</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
             font-family: Arial, sans-serif;
             background: #f0f2f5;
@@ -32,8 +36,13 @@
             flex-wrap: wrap;
             margin-bottom: 20px;
         }
+        .filters select,
+        .filters input {
+            flex: 1 1 150px;
+            min-width: 100px;
+        }
         input, select, button {
-            padding: 10px;
+            padding: 12px;
             border-radius: 5px;
             border: 1px solid #ccc;
             font-size: 14px;
@@ -43,6 +52,7 @@
             color: white;
             cursor: pointer;
             transition: background 0.3s;
+            border: none;
         }
         button:hover {
             background: #218838;
@@ -61,28 +71,43 @@
         th {
             background: #f7f7f7;
         }
+
         @media (max-width: 600px) {
             .filters {
                 flex-direction: column;
             }
+            .filters button {
+                width: 100%;
+            }
             table, thead, tbody, th, td, tr {
                 display: block;
             }
-            th {
-                position: absolute;
-                top: -9999px;
-                left: -9999px;
+            table {
+                border: 0;
+            }
+            thead {
+                display: none;
+            }
+            tr {
+                margin-bottom: 15px;
+                background: #fff;
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                padding: 10px;
             }
             td {
                 position: relative;
                 padding-left: 50%;
-                margin-bottom: 10px;
+                border: none;
+                border-bottom: 1px solid #eee;
+                font-size: 14px;
             }
             td:before {
                 content: attr(data-label);
                 position: absolute;
                 left: 10px;
                 font-weight: bold;
+                white-space: nowrap;
             }
         }
     </style>
@@ -95,25 +120,22 @@
 
 <div class="container">
     <div class="filters">
-    <select id="tipoSanguineo">
-        <option value="">Tipo Sanguíneo</option>
-        <option value="A+">A+</option>
-        <option value="A-">A-</option>
-        <option value="B+">B+</option>
-        <option value="B-">B-</option>
-        <option value="AB+">AB+</option>
-        <option value="AB-">AB-</option>
-        <option value="O+">O+</option>
-        <option value="O-">O-</option>
-    </select>
-
-    <input type="text" id="cidade" placeholder="Cidade">
-    <input type="text" id="bairro" placeholder="Bairro">
-    
-    <button onclick="buscar()">Buscar</button>
-    <button onclick="listar()">Listar Todos</button>
-</div>
-
+        <select id="tipoSanguineo">
+            <option value="">Tipo Sanguíneo</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+        </select>
+        <input type="text" id="cidade" placeholder="Cidade">
+        <input type="text" id="bairro" placeholder="Bairro">
+        <button onclick="buscar()">Buscar</button>
+        <button onclick="listar()">Listar Todos</button>
+    </div>
 
     <table id="tabela">
         <thead>
@@ -186,7 +208,6 @@
 
     listar();
 </script>
-
 
 </body>
 </html>
