@@ -11,4 +11,14 @@ public interface DoadorRepository extends JpaRepository<Doador, Long> {
     // Consulta para filtrar por tipo sanguíneo e cidade
     List<Doador> findByTipoSanguineoAndCidade(String tipoSanguineo, String cidade);
     Optional<Doador> findByCpf(String cpf);
+    
+    List<Doador> findByTipoSanguineo(String tipoSanguineo);
+
+    List<Doador> findByCidade(String cidade);
+
+    List<Doador> findByBairro(String bairro);
+
+
+    List<Doador> findByTipoSanguineoAndCidadeAndBairro(String tipoSanguineo, String cidade, String bairro);
+    
 }

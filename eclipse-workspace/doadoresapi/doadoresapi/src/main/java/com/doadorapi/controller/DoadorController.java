@@ -15,8 +15,7 @@ import java.util.Optional;
 public class DoadorController {
 
     private final DoadorRepository repository;
-
-    // ✅ Injeção via construtor — melhor prática!
+   // ✅ Injeção via construtor — melhor prática!
     public DoadorController(DoadorRepository repository) {
         this.repository = repository;
     }
@@ -45,9 +44,24 @@ public class DoadorController {
 
     // ✅ BUSCAR DOADORES POR TIPO SANGUÍNEO E CIDADE
     @GetMapping("/buscar")
-    public List<Doador> buscarDoadores(
-            @RequestParam String tipoSanguineo,
-            @RequestParam String cidade) {
-        return repository.findByTipoSanguineoAndCidade(tipoSanguineo, cidade);
+    public List<Doador> buscar(
+            @RequestParam(required = false) String tipoSanguineo,
+            @RequestParam(required = false) String cidade,
+            @RequestParam(required = false) String bairro) {
+        
+        if (tipoSanguineo != null && cidade != null && bairro != null) {
+            return repository.findByTipoSanguineoAndCidadeAndBairro(tipoSanguineo, cidade, bairro);
+        } else if (tipoSanguineo != null && cidade != null) {
+            return repository.findByTipoSanguineoAndCidade(tipoSanguineo, cidade);
+        } else if (tipoSanguineo != null) {
+            return repository.findByTipoSanguineo(tipoSanguineo);
+        } else if (cidade != null) {
+            return repository.findByCidade(cidade);
+        } else if (bairro != null) {
+            return repository.findByBairro(bairro);
+        } else {
+            return repository.findAll();
+        }
     }
+
 }
