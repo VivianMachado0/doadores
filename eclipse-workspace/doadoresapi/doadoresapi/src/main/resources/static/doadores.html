@@ -45,8 +45,7 @@
 
         <input type="text" id="cidade" placeholder="Cidade">
         <input type="text" id="bairro" placeholder="Bairro">
-        
-        <button onclick="buscar()">Buscar</button>
+
         <button onclick="listar()">Listar Todos</button>
     </div>
 
@@ -106,8 +105,9 @@
         const cidade = document.getElementById('cidade').value.trim();
         const bairro = document.getElementById('bairro').value.trim();
 
+        // Se nenhum filtro for preenchido, mostra alerta e não busca
         if (!tipo && !cidade && !bairro) {
-            alert('Informe ao menos um filtro.');
+            tabela.innerHTML = '<tr><td colspan="7">Por favor, informe pelo menos um filtro.</td></tr>';
             return;
         }
 
@@ -129,6 +129,12 @@
         window.location.href = `cadastro.html?id=${id}`;
     }
 
+    // Aqui adicionamos os event listeners para disparar a busca automaticamente
+    document.getElementById('tipoSanguineo').addEventListener('change', buscar);
+    document.getElementById('cidade').addEventListener('input', buscar);
+    document.getElementById('bairro').addEventListener('input', buscar);
+
+    // Carrega a lista completa inicialmente
     listar();
 </script>
 
