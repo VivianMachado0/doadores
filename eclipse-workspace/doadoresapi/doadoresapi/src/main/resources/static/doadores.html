@@ -1,141 +1,315 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Lista de Doadores</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f0f2f5; margin: 0; padding: 0; }
-        header { background: #28a745; color: white; padding: 20px; text-align: center; font-size: 24px; font-weight: bold; }
-        .container { max-width: 800px; margin: 30px auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
-        input, select, button { padding: 10px; border-radius: 5px; border: 1px solid #ccc; font-size: 14px; }
-        button { background: #28a745; color: white; cursor: pointer; transition: background 0.3s; }
-        button:hover { background: #218838; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; font-size: 14px; }
-        th { background: #f7f7f7; }
-        @media (max-width: 600px) {
-            .filters { flex-direction: column; }
-            table, thead, tbody, th, td, tr { display: block; }
-            th { position: absolute; top: -9999px; left: -9999px; }
-            td { position: relative; padding-left: 50%; margin-bottom: 10px; }
-            td:before { content: attr(data-label); position: absolute; left: 10px; font-weight: bold; }
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lista de Doadores</title>
+<style>
+ /* Reset básico */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f9fafb;
+  margin: 0;
+  padding: 0;
+  color: #333;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+header {
+  background: #28a745;
+  color: white;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.15);
+}
+
+.container {
+  max-width: 900px;
+  margin: 2rem auto;
+  background: white;
+  padding: 1.5rem 1.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 20px rgb(0 0 0 / 0.1);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+select, input[type="text"], button {
+  font-size: 1rem;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: 1.8px solid #ccc;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  flex: 1 1 150px;
+  min-width: 120px;
+}
+
+select:focus, input[type="text"]:focus {
+  outline: none;
+  border-color: #28a745;
+  box-shadow: 0 0 6px #a7d7a9;
+}
+
+button {
+  background: #28a745;
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s;
+  border-radius: 5px;
+  border: 1px solid #28a745;
+  padding: 10px 20px; /* padrão desktop */
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 4px 8px rgb(40 167 69 / 0.3);
+  user-select: none;
+}
+
+button:hover, button:focus {
+  background: #218838;
+  box-shadow: 0 6px 14px rgb(33 136 56 / 0.5);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  table-layout: fixed;
+  word-wrap: break-word;
+}
+
+thead tr {
+  background: #e9f3e9;
+}
+
+th, td {
+  padding: 0.8rem 1rem;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+th {
+  font-weight: 700;
+  color: #2d5d2d;
+}
+
+tbody tr:nth-child(even) {
+  background: #f9fdf9;
+}
+
+tbody tr:hover {
+  background: #d9efd9;
+}
+
+tbody td:last-child button {
+  background-color: #007bff;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+tbody td:last-child button:hover {
+  background-color: #0056b3;
+}
+
+/* Responsivo: para celular */
+
+@media (max-width: 600px) {
+  .filters {
+    flex-direction: column;
+    align-items: stretch; /* Faz os elementos ocuparem 100% */
+  }
+
+  select, input[type="text"], button {
+    width: 100%; /* força largura cheia */
+    padding: 12px; /* altura confortável, mas menor */
+    font-size: 16px; /* melhora legibilidade */
+    min-width: unset; /* remove limite mínimo */
+    flex: unset; /* remove flexão que impede 100% */
+  }
+
+  tbody td:last-child button {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 8px;
+  }
+
+
+  /* Ajuste todos os botões */
+  button {
+    padding: 8px 16px; /* reduz a altura */
+    font-size: 14px;   /* mantém legível */
+  }
+
+  table, thead, tbody, th, td, tr {
+    display: block;
+    width: 100%;
+  }
+
+  thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+
+  tbody tr {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 5px 10px rgb(0 0 0 / 0.05);
+  }
+
+
+  tbody td:last-child {
+    border-bottom: 0;
+    padding-top: 0.8rem;
+  }
+
+  tbody td:before {
+    content: attr(data-label);
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: 600;
+    color: #28a745;
+    white-space: nowrap;
+  }
+
+  tbody td:last-child button {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border-radius: 8px;
+  }
+}
+ 
+</style>
 </head>
 <body>
 
-<header>
-    Lista de Doadores
-</header>
+<header>Lista de Doadores</header>
 
 <div class="container">
-    <div class="filters">
-        <select id="tipoSanguineo">
-            <option value="">Tipo Sanguíneo</option>
-            <option value="A+">A+</option>
-            <option value="A-">A-</option>
-            <option value="B+">B+</option>
-            <option value="B-">B-</option>
-            <option value="AB+">AB+</option>
-            <option value="AB-">AB-</option>
-            <option value="O+">O+</option>
-            <option value="O-">O-</option>
-        </select>
+  <div class="filters">
+    <select id="tipoSanguineo" aria-label="Filtro por tipo sanguíneo">
+      <option value="">Tipo Sanguíneo</option>
+      <option value="A+">A+</option>
+      <option value="A-">A-</option>
+      <option value="B+">B+</option>
+      <option value="B-">B-</option>
+      <option value="AB+">AB+</option>
+      <option value="AB-">AB-</option>
+      <option value="O+">O+</option>
+      <option value="O-">O-</option>
+    </select>
 
-        <input type="text" id="cidade" placeholder="Cidade">
-        <input type="text" id="bairro" placeholder="Bairro">
+    <input type="text" id="cidade" placeholder="Cidade" aria-label="Filtro por cidade" />
+    <input type="text" id="bairro" placeholder="Bairro" aria-label="Filtro por bairro" />
 
-        <button onclick="listar()">Listar Todos</button>
-    </div>
+    <button onclick="listar()" aria-label="Listar todos os doadores">Listar Todos</button>
+  </div>
 
-    <table id="tabela">
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Tipo</th>
-                <th>Bairro</th>
-                <th>Cidade</th>
-                <th>Telefone</th>
-                <th>Email</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+  <table id="tabela" aria-live="polite">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Tipo</th>
+        <th>Bairro</th>
+        <th>Cidade</th>
+        <th>Telefone</th>
+        <th>Email</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 </div>
 
 <script>
-    const tabela = document.querySelector('#tabela tbody');
+  const tabela = document.querySelector('#tabela tbody');
 
-    function renderizar(dados) {
-        tabela.innerHTML = '';
-        if (dados.length === 0) {
-            tabela.innerHTML = '<tr><td colspan="7">Nenhum doador encontrado.</td></tr>';
-            return;
-        }
-        dados.forEach(doador => {
-            const row = `
-                <tr>
-                    <td data-label="Nome">${doador.nome}</td>
-                    <td data-label="Tipo">${doador.tipoSanguineo}</td>
-                    <td data-label="Bairro">${doador.bairro}</td>
-                    <td data-label="Cidade">${doador.cidade}</td>
-                    <td data-label="Telefone">${doador.telefone}</td>
-                    <td data-label="Email">${doador.email}</td>
-                    <td><button onclick="editar('${doador.id}')">Editar</button></td>
-                </tr>
-            `;
-            tabela.insertAdjacentHTML('beforeend', row);
-        });
+  function renderizar(dados) {
+    tabela.innerHTML = '';
+    if (dados.length === 0) {
+      tabela.innerHTML = '<tr><td colspan="7" style="text-align:center;">Nenhum doador encontrado.</td></tr>';
+      return;
+    }
+    dados.forEach(doador => {
+      const row = `
+        <tr>
+          <td data-label="Nome">${doador.nome}</td>
+          <td data-label="Tipo">${doador.tipoSanguineo}</td>
+          <td data-label="Bairro">${doador.bairro}</td>
+          <td data-label="Cidade">${doador.cidade}</td>
+          <td data-label="Telefone">${doador.telefone}</td>
+          <td data-label="Email">${doador.email}</td>
+          <td data-label="Ações"><button onclick="editar('${doador.id}')">Editar</button></td>
+        </tr>
+      `;
+      tabela.insertAdjacentHTML('beforeend', row);
+    });
+  }
+
+  async function listar() {
+    try {
+      const res = await fetch('https://doadores-spring.onrender.com/doadores');
+      const dados = await res.json();
+      renderizar(dados);
+    } catch (err) {
+      alert('Erro ao listar doadores.');
+    }
+  }
+
+  async function buscar() {
+    const tipo = document.getElementById('tipoSanguineo').value;
+    const cidade = document.getElementById('cidade').value.trim();
+    const bairro = document.getElementById('bairro').value.trim();
+
+    if (!tipo && !cidade && !bairro) {
+      tabela.innerHTML = '<tr><td colspan="7" style="text-align:center;">Por favor, informe pelo menos um filtro.</td></tr>';
+      return;
     }
 
-    async function listar() {
-        try {
-            const res = await fetch('https://doadores-spring.onrender.com/doadores');
-            const dados = await res.json();
-            renderizar(dados);
-        } catch (err) {
-            alert('Erro ao listar doadores.');
-        }
+    try {
+      const url = new URL('https://doadores-spring.onrender.com/doadores/buscar');
+      if (tipo) url.searchParams.append('tipoSanguineo', tipo);
+      if (cidade) url.searchParams.append('cidade', cidade);
+      if (bairro) url.searchParams.append('bairro', bairro);
+
+      const res = await fetch(url);
+      const dados = await res.json();
+      renderizar(dados);
+    } catch (err) {
+      alert('Erro ao buscar doadores.');
     }
+  }
 
-    async function buscar() {
-        const tipo = document.getElementById('tipoSanguineo').value;
-        const cidade = document.getElementById('cidade').value.trim();
-        const bairro = document.getElementById('bairro').value.trim();
+  function editar(id) {
+    window.location.href = `cadastro.html?id=${id}`;
+  }
 
-        // Se nenhum filtro for preenchido, mostra alerta e não busca
-        if (!tipo && !cidade && !bairro) {
-            tabela.innerHTML = '<tr><td colspan="7">Por favor, informe pelo menos um filtro.</td></tr>';
-            return;
-        }
+  document.getElementById('tipoSanguineo').addEventListener('change', buscar);
+  document.getElementById('cidade').addEventListener('input', buscar);
+  document.getElementById('bairro').addEventListener('input', buscar);
 
-        try {
-            const url = new URL('https://doadores-spring.onrender.com/doadores/buscar');
-            if (tipo) url.searchParams.append('tipoSanguineo', tipo);
-            if (cidade) url.searchParams.append('cidade', cidade);
-            if (bairro) url.searchParams.append('bairro', bairro);
-
-            const res = await fetch(url);
-            const dados = await res.json();
-            renderizar(dados);
-        } catch (err) {
-            alert('Erro ao buscar doadores.');
-        }
-    }
-
-    function editar(id) {
-        window.location.href = `cadastro.html?id=${id}`;
-    }
-
-    // Aqui adicionamos os event listeners para disparar a busca automaticamente
-    document.getElementById('tipoSanguineo').addEventListener('change', buscar);
-    document.getElementById('cidade').addEventListener('input', buscar);
-    document.getElementById('bairro').addEventListener('input', buscar);
-
-    // Carrega a lista completa inicialmente
-    listar();
+  listar();
 </script>
 
 </body>
