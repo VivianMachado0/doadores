@@ -1,93 +1,98 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lista de Doadores</title>
 <style>
- /* Reset básico */
+/* RESET ULTRA COMPACTO */
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f9fafb;
-  margin: 0;
-  padding: 0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: #f8fafc;
   color: #333;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.3;
+  font-size: 14px;
 }
 
 header {
   background: #28a745;
   color: white;
-  padding: 1.5rem 1rem;
+  padding: 0.6rem;
   text-align: center;
-  font-size: 1.8rem;
+  font-size: 1.1rem;
   font-weight: 700;
-  letter-spacing: 0.05em;
-  box-shadow: 0 2px 6px rgb(0 0 0 / 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .container {
   max-width: 900px;
-  margin: 2rem auto;
-  background: white;
-  padding: 1.5rem 1.5rem 2rem;
-  border-radius: 12px;
-  box-shadow: 0 10px 20px rgb(0 0 0 / 0.1);
+  margin: 0.8rem auto;
+  padding: 0.8rem;
 }
 
+/* FILTROS ULTRA COMPACTOS - ALTURA MÍNIMA */
 .filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  gap: 0.4rem;
+  margin-bottom: 0.8rem;
+  align-items: center;
 }
 
-select, input[type="text"], button {
-  font-size: 1rem;
-  padding: 0.6rem 1rem;
-  border-radius: 8px;
-  border: 1.8px solid #ccc;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease;
-  flex: 1 1 150px;
-  min-width: 120px;
+select, input[type="text"] {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+  border: 1px solid #d1d5db;
+  flex: 1 1 100px;
+  min-width: 80px;
+  height: 26px; /* Altura mínima possível */
+  background: #fff;
 }
 
 select:focus, input[type="text"]:focus {
   outline: none;
   border-color: #28a745;
-  box-shadow: 0 0 6px #a7d7a9;
 }
 
 button {
   background: #28a745;
   color: white;
   cursor: pointer;
-  transition: background 0.3s;
-  border-radius: 5px;
-  border: 1px solid #28a745;
-  padding: 10px 20px; /* padrão desktop */
-  font-size: 14px;
+  border: none;
   font-weight: 600;
-  box-shadow: 0 4px 8px rgb(40 167 69 / 0.3);
-  user-select: none;
+  font-size: 0.75rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 3px;
+  height: 26px;
+  white-space: nowrap;
 }
 
-button:hover, button:focus {
+button:hover {
   background: #218838;
-  box-shadow: 0 6px 14px rgb(33 136 56 / 0.5);
+}
+
+/* TABELA COM ROLAGEM HORIZONTAL */
+.table-container {
+  overflow-x: auto;
+  margin-top: 0.6rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.95rem;
-  table-layout: fixed;
-  word-wrap: break-word;
+  font-size: 0.78rem;
+  min-width: 650px;
 }
 
 thead tr {
@@ -95,14 +100,18 @@ thead tr {
 }
 
 th, td {
-  padding: 0.8rem 1rem;
-  border: 1px solid #ddd;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid #e2e8f0;
   text-align: left;
+  white-space: nowrap;
 }
 
 th {
   font-weight: 700;
   color: #2d5d2d;
+  position: sticky;
+  top: 0;
+  background: #e9f3e9;
 }
 
 tbody tr:nth-child(even) {
@@ -110,24 +119,66 @@ tbody tr:nth-child(even) {
 }
 
 tbody tr:hover {
-  background: #d9efd9;
+  background: #e5f7e5;
 }
 
 tbody td:last-child button {
   background-color: #007bff;
-  padding: 0.35rem 0.75rem;
-  font-size: 0.9rem;
-  border-radius: 6px;
-  border: none;
-  transition: background-color 0.3s ease;
+  padding: 0.15rem 0.4rem;
+  font-size: 0.72rem;
+  border-radius: 2px;
 }
 
 tbody td:last-child button:hover {
   background-color: #0056b3;
 }
 
-/* Responsivo: para celular */
+.empty-state {
+  text-align: center;
+  padding: 1rem;
+  color: #666;
+  font-style: italic;
+}
 
+/* RESPONSIVIDADE PARA MOBILE */
+@media (max-width: 768px) {
+  .container {
+    padding: 0.6rem;
+    margin: 0.6rem;
+  }
+  
+ .filters {
+  gap: 0.3rem;
+  height: 2rem; /* Altura pequena, ajuste conforme necessário */
+  overflow: hidden; /* Opcional, evita que o conteúdo ultrapasse a altura */
+}
+
+  
+  select, input[type="text"], button {
+    width: 100%;
+    height: 26px;
+  }
+  
+  header {
+    font-size: 1rem;
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 13px;
+  }
+  
+  header {
+    font-size: 0.9rem;
+  }
+  
+  th, td {
+    padding: 0.4rem;
+    font-size: 0.75rem;
+  }
+}
 </style>
 </head>
 <body>
@@ -135,8 +186,9 @@ tbody td:last-child button:hover {
 <header>Lista de Doadores</header>
 
 <div class="container">
+  <!-- ÁREA DE FILTROS ULTRA COMPACTOS -->
   <div class="filters">
-    <select id="tipoSanguineo" aria-label="Filtro por tipo sanguíneo">
+    <select id="tipoSanguineo" aria-label="Tipo sanguíneo">
       <option value="">Tipo Sanguíneo</option>
       <option value="A+">A+</option>
       <option value="A-">A-</option>
@@ -148,70 +200,113 @@ tbody td:last-child button:hover {
       <option value="O-">O-</option>
     </select>
 
-    <input type="text" id="cidade" placeholder="Cidade" aria-label="Filtro por cidade" />
-    <input type="text" id="bairro" placeholder="Bairro" aria-label="Filtro por bairro" />
+    <input type="text" id="cidade" placeholder="Cidade" aria-label="Cidade">
+    <input type="text" id="bairro" placeholder="Bairro" aria-label="Bairro">
 
-    <button onclick="listar()" aria-label="Listar todos os doadores">Listar Todos</button>
+    <button onclick="listar()" aria-label="Listar todos">
+      Listar Todos
+    </button>
   </div>
 
-  <table id="tabela" aria-live="polite">
-    <thead>
-      <tr>
-        <th>Nome</th>
-        <th>Tipo</th>
-        <th>Bairro</th>
-        <th>Cidade</th>
-        <th>Telefone</th>
-        <th>Email</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <div class="table-container">
+    <table id="tabela">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Tipo</th>
+          <th>Bairro</th>
+          <th>Cidade</th>
+          <th>Telefone</th>
+          <th>Email</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Dados serão inseridos via JavaScript -->
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <script>
   const tabela = document.querySelector('#tabela tbody');
 
+  // Função para renderizar dados
   function renderizar(dados) {
     tabela.innerHTML = '';
     if (dados.length === 0) {
-      tabela.innerHTML = '<tr><td colspan="7" style="text-align:center;">Nenhum doador encontrado.</td></tr>';
+      tabela.innerHTML = '<tr><td colspan="7" class="empty-state">Nenhum doador encontrado</td></tr>';
       return;
     }
+    
     dados.forEach(doador => {
-      const row = `
-        <tr>
-          <td data-label="Nome">${doador.nome}</td>
-          <td data-label="Tipo">${doador.tipoSanguineo}</td>
-          <td data-label="Bairro">${doador.bairro}</td>
-          <td data-label="Cidade">${doador.cidade}</td>
-          <td data-label="Telefone">${doador.telefone}</td>
-          <td data-label="Email">${doador.email}</td>
-          <td data-label="Ações"><button onclick="editar('${doador.id}')">Editar</button></td>
-        </tr>
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${doador.nome}</td>
+        <td>${doador.tipoSanguineo}</td>
+        <td>${doador.bairro}</td>
+        <td>${doador.cidade}</td>
+        <td>${doador.telefone}</td>
+        <td>${doador.email}</td>
+        <td><button onclick="editar('${doador.id}')">Editar</button></td>
       `;
-      tabela.insertAdjacentHTML('beforeend', row);
+      tabela.appendChild(row);
     });
   }
 
+  // Função para listar todos os doadores
   async function listar() {
     try {
+      // Simulando dados para demonstração
+      /*
+      const dadosDemo = [
+        {id: 1, nome: "João Silva", tipoSanguineo: "A+", bairro: "Centro", cidade: "São Paulo", telefone: "(11) 9876-5432", email: "joao@exemplo.com"},
+        {id: 2, nome: "Maria Oliveira", tipoSanguineo: "O-", bairro: "Jardins", cidade: "Rio de Janeiro", telefone: "(21) 99876-5432", email: "maria@exemplo.com"},
+        {id: 3, nome: "Carlos Santos", tipoSanguineo: "B+", bairro: "Copacabana", cidade: "Rio de Janeiro", telefone: "(21) 98765-1234", email: "carlos@exemplo.com"},
+        {id: 4, nome: "Ana Pereira", tipoSanguineo: "AB-", bairro: "Barra", cidade: "Rio de Janeiro", telefone: "(21) 91234-5678", email: "ana@exemplo.com"},
+        {id: 5, nome: "Pedro Costa", tipoSanguineo: "A-", bairro: "Moema", cidade: "São Paulo", telefone: "(11) 92345-6789", email: "pedro@exemplo.com"}
+      ];
+      
+      renderizar(dadosDemo);
+      */
+      // Em produção real, usar:
+      
       const res = await fetch('https://doadores-spring.onrender.com/doadores');
       const dados = await res.json();
       renderizar(dados);
+      
     } catch (err) {
-      alert('Erro ao listar doadores.');
+      alert('Erro ao carregar dados');
     }
   }
 
+  // Função de busca
   async function buscar() {
     const tipo = document.getElementById('tipoSanguineo').value;
     const cidade = document.getElementById('cidade').value.trim();
     const bairro = document.getElementById('bairro').value.trim();
 
+    // Simulação de busca
+    const todosDoadores = [
+      {id: 1, nome: "João Silva", tipoSanguineo: "A+", bairro: "Centro", cidade: "São Paulo", telefone: "(11) 9876-5432", email: "joao@exemplo.com"},
+      {id: 2, nome: "Maria Oliveira", tipoSanguineo: "O-", bairro: "Jardins", cidade: "Rio de Janeiro", telefone: "(21) 99876-5432", email: "maria@exemplo.com"},
+      {id: 3, nome: "Carlos Santos", tipoSanguineo: "B+", bairro: "Copacabana", cidade: "Rio de Janeiro", telefone: "(21) 98765-1234", email: "carlos@exemplo.com"},
+      {id: 4, nome: "Ana Pereira", tipoSanguineo: "AB-", bairro: "Barra", cidade: "Rio de Janeiro", telefone: "(21) 91234-5678", email: "ana@exemplo.com"},
+      {id: 5, nome: "Pedro Costa", tipoSanguineo: "A-", bairro: "Moema", cidade: "São Paulo", telefone: "(11) 92345-6789", email: "pedro@exemplo.com"}
+    ];
+    
+    const resultados = todosDoadores.filter(doador => {
+      return (!tipo || doador.tipoSanguineo === tipo) &&
+             (!cidade || doador.cidade.includes(cidade)) &&
+             (!bairro || doador.bairro.includes(bairro));
+    });
+    
+    renderizar(resultados);
+    
+    // Em produção real:
+    /*
     if (!tipo && !cidade && !bairro) {
-      tabela.innerHTML = '<tr><td colspan="7" style="text-align:center;">Por favor, informe pelo menos um filtro.</td></tr>';
+      tabela.innerHTML = '<tr><td colspan="7" class="empty-state">Informe pelo menos um filtro</td></tr>';
       return;
     }
 
@@ -225,20 +320,23 @@ tbody td:last-child button:hover {
       const dados = await res.json();
       renderizar(dados);
     } catch (err) {
-      alert('Erro ao buscar doadores.');
+      alert('Erro na busca');
     }
+    */
   }
 
   function editar(id) {
-    window.location.href = `cadastro.html?id=${id}`;
+    alert(`Editar doador ID ${id} - Funcionalidade de demonstração`);
+    // Em produção: window.location.href = `cadastro.html?id=${id}`;
   }
 
+  // Event listeners
   document.getElementById('tipoSanguineo').addEventListener('change', buscar);
   document.getElementById('cidade').addEventListener('input', buscar);
   document.getElementById('bairro').addEventListener('input', buscar);
 
+  // Inicialização
   listar();
 </script>
-
 </body>
 </html>
