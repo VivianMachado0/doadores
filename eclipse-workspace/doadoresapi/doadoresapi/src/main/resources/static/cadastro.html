@@ -222,125 +222,126 @@
     <p>Ao marcar o aceite, você concorda com a coleta e o tratamento de seus dados conforme esta Política e a LGPD.</p>
   </div>
 </div>
-<script>
-    const form = document.getElementById('doadorForm');
-    const message = document.getElementById('message');
-    const btnSubmit = document.getElementById('btnSubmit');
-    const aceite = document.getElementById('aceite');
-    const politicaModal = document.getElementById('politicaModal');
+    <!-- Todo o conteúdo HTML acima -->
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const doadorId = urlParams.get('id');
+    <script>
+        const form = document.getElementById('doadorForm');
+        const message = document.getElementById('message');
+        const btnSubmit = document.getElementById('btnSubmit');
+        const aceite = document.getElementById('aceite');
+        const politicaModal = document.getElementById('politicaModal');
 
-    if (doadorId) {
-        carregarDoador(doadorId);
-        btnSubmit.textContent = 'Atualizar';
-    }
+        const urlParams = new URLSearchParams(window.location.search);
+        const doadorId = urlParams.get('id');
 
-    function mostrarPolitica() {
-        politicaModal.style.display = 'block';
-    }
-
-    function fecharPolitica() {
-        politicaModal.style.display = 'none';
-    }
-
-    window.addEventListener('click', function(event) {
-        if (event.target === politicaModal) {
-            fecharPolitica();
-        }
-    });
-
-    function exibirMensagem(texto, cor = 'red') {
-        message.textContent = texto;
-        message.style.color = cor;
-    }
-
-    async function carregarDoador(id) {
-        try {
-            const res = await fetch(`https://doadores-spring.onrender.com/doadores/${id}`);
-            if (!res.ok) throw new Error('Erro ao carregar dados.');
-
-            const doador = await res.json();
-
-            Object.keys(doador).forEach(key => {
-                if (form[key]) {
-                    form[key].value = doador[key];
-                }
-            });
-
-            form.cpf.disabled = true;
-
-        } catch (err) {
-            exibirMensagem(err.message);
-        }
-    }
-
-    form.addEventListener('submit', async function(e) {
-        e.preventDefault();
-
-        if (!aceite.checked) {
-            exibirMensagem('Você deve aceitar a Política de Privacidade para continuar.');
-            return;
+        if (doadorId) {
+            carregarDoador(doadorId);
+            btnSubmit.textContent = 'Atualizar';
         }
 
-        const cpf = form.cpf.value;
+        function mostrarPolitica() {
+            politicaModal.style.display = 'block';
+        }
 
-        try {
-            if (!doadorId) {
-                const checkResponse = await fetch(`https://doadores-spring.onrender.com/doadores/cpf/${cpf}`);
-                
-                if (checkResponse.ok) {
-                    const existingDoador = await checkResponse.json();
-                    if (existingDoador && existingDoador.id) {
-                        exibirMensagem('CPF já cadastrado!');
-                        return;
+        function fecharPolitica() {
+            politicaModal.style.display = 'none';
+        }
+
+        window.addEventListener('click', function(event) {
+            if (event.target === politicaModal) {
+                fecharPolitica();
+            }
+        });
+
+        function exibirMensagem(texto, cor = 'red') {
+            message.textContent = texto;
+            message.style.color = cor;
+        }
+
+        async function carregarDoador(id) {
+            try {
+                const res = await fetch(`https://doadores-spring.onrender.com/doadores/${id}`);
+                if (!res.ok) throw new Error('Erro ao carregar dados.');
+
+                const doador = await res.json();
+
+                Object.keys(doador).forEach(key => {
+                    if (form[key]) {
+                        form[key].value = doador[key];
                     }
-                } else if (checkResponse.status !== 404) {
-                    throw new Error('Erro ao verificar CPF.');
-                }
+                });
+
+                form.cpf.disabled = true;
+
+            } catch (err) {
+                exibirMensagem(err.message);
             }
-
-            const data = {
-                nome: form.nome.value,
-                cpf: form.cpf.value,
-                rua: form.rua.value,
-                numero: form.numero.value,
-                bairro: form.bairro.value,
-                cidade: form.cidade.value,
-                estado: form.estado.value,
-                cep: form.cep.value,
-                telefone: form.telefone.value,
-                email: form.email.value,
-                tipoSanguineo: form.tipoSanguineo.value
-            };
-
-            const url = doadorId 
-                ? `https://doadores-spring.onrender.com/doadores/${doadorId}`
-                : 'https://doadores-spring.onrender.com/doadores';
-
-            const method = doadorId ? 'PUT' : 'POST';
-
-            const res = await fetch(url, {
-                method: method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-
-            if (res.ok) {
-                exibirMensagem(doadorId ? 'Doador atualizado com sucesso!' : 'Doador cadastrado com sucesso!', 'green');
-                if (!doadorId) form.reset();
-            } else {
-                const errorData = await res.json();
-                throw new Error(errorData.message || 'Erro ao enviar dados');
-            }
-
-        } catch (err) {
-            exibirMensagem(err.message);
         }
-    });
-</script>
 
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            if (!aceite.checked) {
+                exibirMensagem('Você deve aceitar a Política de Privacidade para continuar.');
+                return;
+            }
+
+            const cpf = form.cpf.value;
+
+            try {
+                if (!doadorId) {
+                    const checkResponse = await fetch(`https://doadores-spring.onrender.com/doadores/cpf/${cpf}`);
+                    
+                    if (checkResponse.ok) {
+                        const existingDoador = await checkResponse.json();
+                        if (existingDoador && existingDoador.id) {
+                            exibirMensagem('CPF já cadastrado!');
+                            return;
+                        }
+                    } else if (checkResponse.status !== 404) {
+                        throw new Error('Erro ao verificar CPF.');
+                    }
+                }
+
+                const data = {
+                    nome: form.nome.value,
+                    cpf: form.cpf.value,
+                    rua: form.rua.value,
+                    numero: form.numero.value,
+                    bairro: form.bairro.value,
+                    cidade: form.cidade.value,
+                    estado: form.estado.value,
+                    cep: form.cep.value,
+                    telefone: form.telefone.value,
+                    email: form.email.value,
+                    tipoSanguineo: form.tipoSanguineo.value
+                };
+
+                const url = doadorId 
+                    ? `https://doadores-spring.onrender.com/doadores/${doadorId}`
+                    : 'https://doadores-spring.onrender.com/doadores';
+
+                const method = doadorId ? 'PUT' : 'POST';
+
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    exibirMensagem(doadorId ? 'Doador atualizado com sucesso!' : 'Doador cadastrado com sucesso!', 'green');
+                    if (!doadorId) form.reset();
+                } else {
+                    const errorData = await res.json();
+                    throw new Error(errorData.message || 'Erro ao enviar dados');
+                }
+
+            } catch (err) {
+                exibirMensagem(err.message);
+            }
+        });
+    </script>
 
 </body>
 </html>
