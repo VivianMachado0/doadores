@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/inputmask/5.0.8/inputmask.min.js"></script>
+    
     <title>Cadastro de Doador</title>
     <style>
         * { box-sizing: border-box; }
@@ -250,17 +252,20 @@
 
         try {
             if (!doadorId) {
-                const checkResponse = await fetch(`https://doadores-spring.onrender.com/doadores/cpf/${cpf}`);
-                if (checkResponse.ok) {
-                    const existingDoador = await checkResponse.json();
-                    if (existingDoador && (existingDoador.id || (Array.isArray(existingDoador) && existingDoador.length > 0))) {
-                        exibirMensagem('CPF já cadastrado!');
-                        btnSubmit.disabled = false;
-                        return;
-                    }
-                } else if (checkResponse.status !== 404) {
-                    throw new Error('Erro ao verificar CPF.');
-                }
+            	const checkResponse = await fetch(`https://doadores-spring.onrender.com/doadores/cpf/${cpf}`);
+            	if (checkResponse.ok) {
+            	    const existingDoador = await checkResponse.json();
+            	    if (existingDoador && (existingDoador.id || (Array.isArray(existingDoador) && existingDoador.length > 0))) {
+            	        exibirMensagem('CPF já cadastrado!');
+            	        btnSubmit.disabled = false;
+            	        return;
+            	    }
+            	} else if (checkResponse.status !== 404) {
+            	    throw new Error('Erro ao verificar CPF.');
+            	}
+
+                
+                
             }
 
             const data = {
@@ -313,6 +318,15 @@
     function consultarCadastro() {
         alert('Funcionalidade de consulta ainda não implementada.');
     }
+
+    window.onload = function() {
+        Inputmask("999.999.999-99").mask(document.getElementById('cpf'));
+        Inputmask("99999-999").mask(document.getElementById('cep'));
+        Inputmask("(99) 99999-9999").mask(document.getElementById('telefone'));
+      };
+
+    
+      
 </script>
 </body>
 </html>

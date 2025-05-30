@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,18 +25,18 @@ public class DoadorController {
     @PostMapping
     public ResponseEntity<?> cadastrarDoador(@RequestBody Doador doador) {
         Optional<Doador> existente = repository.findByCpf(doador.getCpf());
-
         if (existente.isPresent()) {
-            // Retornar um JSON com a mensagem de erro
-            Map<String, String> erro = new HashMap<>();
-            erro.put("error", "CPF já cadastrado.");
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(erro);
-        }
+    	    Map<String, Object> erro = new HashMap<>();
+    	    erro.put("error", "CPF já cadastrado.");
+    	    erro.put("doadorId", existente.get().getId());
+    	    return ResponseEntity.status(HttpStatus.CONFLICT).body(erro);
+    	}
 
         Doador salvo = repository.save(doador);
         return ResponseEntity.ok(salvo);
     }
 
+  
 
     @GetMapping
     public List<Doador> listarDoadores() {
@@ -86,21 +85,22 @@ public class DoadorController {
     @PutMapping("/{id}")
     public ResponseEntity<?> atualizarDoador(@PathVariable Long id, @RequestBody Doador doadorAtualizado) {
         return repository.findById(id)
-            .map(doador -> {
-                doador.setNome(doadorAtualizado.getNome());
-                doador.setCpf(doadorAtualizado.getCpf());
-                doador.setRua(doadorAtualizado.getRua());
-                doador.setNumero(doadorAtualizado.getNumero());
-                doador.setBairro(doadorAtualizado.getBairro());
-                doador.setCidade(doadorAtualizado.getCidade());
-                doador.setEstado(doadorAtualizado.getEstado());
-                doador.setCep(doadorAtualizado.getCep());
-                doador.setTelefone(doadorAtualizado.getTelefone());
-                doador.setEmail(doadorAtualizado.getEmail());
-                doador.setTipoSanguineo(doadorAtualizado.getTipoSanguineo());
-                repository.save(doador);
-                return ResponseEntity.ok(doador);
+            .map(doadorExistente -> {
+                doadorExistente.setNome(doadorAtualizado.getNome());
+                doadorExistente.setCpf(doadorAtualizado.getCpf());
+                doadorExistente.setRua(doadorAtualizado.getRua());
+                doadorExistente.setNumero(doadorAtualizado.getNumero());
+                doadorExistente.setBairro(doadorAtualizado.getBairro());
+                doadorExistente.setCidade(doadorAtualizado.getCidade());
+                doadorExistente.setEstado(doadorAtualizado.getEstado());
+                doadorExistente.setCep(doadorAtualizado.getCep());
+                doadorExistente.setTelefone(doadorAtualizado.getTelefone());
+                doadorExistente.setEmail(doadorAtualizado.getEmail());
+                doadorExistente.setTipoSanguineo(doadorAtualizado.getTipoSanguineo());
+                repository.save(doadorExistente);
+                return ResponseEntity.ok(doadorExistente);
             })
             .orElse(ResponseEntity.notFound().build());
     }
+
 }
