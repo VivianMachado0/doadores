@@ -28,16 +28,16 @@ public class DoadorController {
         Optional<Doador> existente = repository.findByCpf(doador.getCpf());
 
         if (existente.isPresent()) {
-            Map<String, Object> body = new HashMap<>();
-            body.put("error", "CPF já cadastrado.");
-            body.put("idExistente", existente.get().getId());
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+            // Retornar um JSON com a mensagem de erro
+            Map<String, String> erro = new HashMap<>();
+            erro.put("error", "CPF já cadastrado.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(erro);
         }
 
         Doador salvo = repository.save(doador);
-        System.out.println("Doador recebido: " + doador.getNome() + ", " + doador.getRua() + ", " + doador.getEmail());
         return ResponseEntity.ok(salvo);
     }
+
 
     @GetMapping
     public List<Doador> listarDoadores() {
