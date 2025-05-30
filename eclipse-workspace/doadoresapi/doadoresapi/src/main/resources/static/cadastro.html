@@ -202,6 +202,15 @@
             <div class="message" id="message"></div>
         </form>
     </div>
+    <div class="container" id="successContainer" style="display:none;">
+    <div class="form-box">
+        <h2>Obrigado pelo seu cadastro!</h2>
+        <p>O seu cadastro foi realizado com sucesso.</p>
+        <button onclick="novoCadastro()">Cadastrar Novo</button>
+        <button onclick="consultarCadastro()">Consultar Cadastro pelo CPF</button>
+    </div>
+</div>
+    
 </div>
 
 <div id="politicaModal" class="modal">
@@ -213,12 +222,12 @@
     <p>Ao marcar o aceite, você concorda com a coleta e o tratamento de seus dados conforme esta Política e a LGPD.</p>
   </div>
 </div>
-
-
 <script>
     const form = document.getElementById('doadorForm');
     const message = document.getElementById('message');
     const btnSubmit = document.getElementById('btnSubmit');
+    const aceite = document.getElementById('aceite');
+    const politicaModal = document.getElementById('politicaModal');
 
     const urlParams = new URLSearchParams(window.location.search);
     const doadorId = urlParams.get('id');
@@ -229,58 +238,49 @@
     }
 
     function mostrarPolitica() {
-        const modal = document.getElementById('politicaModal');
-        modal.style.display = 'block';
+        politicaModal.style.display = 'block';
     }
 
     function fecharPolitica() {
-        const modal = document.getElementById('politicaModal');
-        modal.style.display = 'none';
+        politicaModal.style.display = 'none';
     }
 
-    // Fechar ao clicar fora do modal
-    window.onclick = function(event) {
-        const modal = document.getElementById('politicaModal');
-        if (event.target === modal) {
-            modal.style.display = 'none';
+    window.addEventListener('click', function(event) {
+        if (event.target === politicaModal) {
+            fecharPolitica();
         }
+    });
+
+    function exibirMensagem(texto, cor = 'red') {
+        message.textContent = texto;
+        message.style.color = cor;
     }
 
     async function carregarDoador(id) {
         try {
             const res = await fetch(`https://doadores-spring.onrender.com/doadores/${id}`);
-            if (res.ok) {
-                const doador = await res.json();
-                form.nome.value = doador.nome;
-                form.cpf.value = doador.cpf;
-                form.rua.value = doador.rua;
-                form.numero.value = doador.numero;
-                form.bairro.value = doador.bairro;
-                form.cidade.value = doador.cidade;
-                form.estado.value = doador.estado;
-                form.cep.value = doador.cep;
-                form.telefone.value = doador.telefone;
-                form.email.value = doador.email;
-                form.tipoSanguineo.value = doador.tipoSanguineo;
+            if (!res.ok) throw new Error('Erro ao carregar dados.');
 
-                form.cpf.disabled = true;
-            } else {
-                message.textContent = 'Erro ao carregar dados.';
-                message.style.color = 'red';
-            }
+            const doador = await res.json();
+
+            Object.keys(doador).forEach(key => {
+                if (form[key]) {
+                    form[key].value = doador[key];
+                }
+            });
+
+            form.cpf.disabled = true;
+
         } catch (err) {
-            message.textContent = 'Erro ao carregar dados.';
-            message.style.color = 'red';
+            exibirMensagem(err.message);
         }
     }
 
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
 
-        const aceite = document.getElementById('aceite');
         if (!aceite.checked) {
-            message.textContent = 'Você deve aceitar a Política de Privacidade para continuar.';
-            message.style.color = 'red';
+            exibirMensagem('Você deve aceitar a Política de Privacidade para continuar.');
             return;
         }
 
@@ -289,12 +289,11 @@
         try {
             if (!doadorId) {
                 const checkResponse = await fetch(`https://doadores-spring.onrender.com/doadores/cpf/${cpf}`);
-
+                
                 if (checkResponse.ok) {
                     const existingDoador = await checkResponse.json();
                     if (existingDoador && existingDoador.id) {
-                        message.textContent = 'CPF já cadastrado!';
-                        message.style.color = 'red';
+                        exibirMensagem('CPF já cadastrado!');
                         return;
                     }
                 } else if (checkResponse.status !== 404) {
@@ -316,35 +315,32 @@
                 tipoSanguineo: form.tipoSanguineo.value
             };
 
-            let res;
-            if (doadorId) {
-                res = await fetch(`https://doadores-spring.onrender.com/doadores/${doadorId}`, {
-                    method: 'PUT',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(data)
-                });
-            } else {
-                res = await fetch('https://doadores-spring.onrender.com/doadores', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(data)
-                });
-            }
+            const url = doadorId 
+                ? `https://doadores-spring.onrender.com/doadores/${doadorId}`
+                : 'https://doadores-spring.onrender.com/doadores';
+
+            const method = doadorId ? 'PUT' : 'POST';
+
+            const res = await fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
 
             if (res.ok) {
-                message.textContent = doadorId ? 'Doador atualizado com sucesso!' : 'Doador cadastrado com sucesso!';
-                message.style.color = 'green';
+                exibirMensagem(doadorId ? 'Doador atualizado com sucesso!' : 'Doador cadastrado com sucesso!', 'green');
                 if (!doadorId) form.reset();
             } else {
                 const errorData = await res.json();
                 throw new Error(errorData.message || 'Erro ao enviar dados');
             }
+
         } catch (err) {
-            message.textContent = err.message;
-            message.style.color = 'red';
+            exibirMensagem(err.message);
         }
     });
 </script>
+
 
 </body>
 </html>
