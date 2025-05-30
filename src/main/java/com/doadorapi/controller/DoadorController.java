@@ -7,7 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -23,9 +26,14 @@ public class DoadorController {
     @PostMapping
     public ResponseEntity<?> cadastrarDoador(@RequestBody Doador doador) {
         Optional<Doador> existente = repository.findByCpf(doador.getCpf());
+
         if (existente.isPresent()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("CPF já cadastrado.");
+            Map<String, Object> body = new HashMap<>();
+            body.put("error", "CPF já cadastrado.");
+            body.put("idExistente", existente.get().getId());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
         }
+
         Doador salvo = repository.save(doador);
         System.out.println("Doador recebido: " + doador.getNome() + ", " + doador.getRua() + ", " + doador.getEmail());
         return ResponseEntity.ok(salvo);
