@@ -15,40 +15,33 @@ import java.util.Optional;
 public class DoadorController {
 
     private final DoadorRepository repository;
-   // ✅ Injeção via construtor — melhor prática!
+
     public DoadorController(DoadorRepository repository) {
         this.repository = repository;
     }
 
-    // ✅ CADASTRAR DOADOR COM VERIFICAÇÃO DE CPF
     @PostMapping
     public ResponseEntity<?> cadastrarDoador(@RequestBody Doador doador) {
         Optional<Doador> existente = repository.findByCpf(doador.getCpf());
-
         if (existente.isPresent()) {
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body("CPF já cadastrado.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("CPF já cadastrado.");
         }
-
         Doador salvo = repository.save(doador);
         System.out.println("Doador recebido: " + doador.getNome() + ", " + doador.getRua() + ", " + doador.getEmail());
         return ResponseEntity.ok(salvo);
     }
 
-    // ✅ LISTAR TODOS OS DOADORES
     @GetMapping
     public List<Doador> listarDoadores() {
         return repository.findAll();
     }
 
-    // ✅ BUSCAR DOADORES POR TIPO SANGUÍNEO E CIDADE
     @GetMapping("/buscar")
     public List<Doador> buscar(
             @RequestParam(required = false) String tipoSanguineo,
             @RequestParam(required = false) String cidade,
             @RequestParam(required = false) String bairro) {
-        
+
         if (tipoSanguineo != null && cidade != null && bairro != null) {
             return repository.findByTipoSanguineoAndCidadeAndBairro(tipoSanguineo, cidade, bairro);
         } else if (tipoSanguineo != null && cidade != null) {
@@ -63,8 +56,7 @@ public class DoadorController {
             return repository.findAll();
         }
     }
-    
- // ✅ BUSCAR DOADOR POR ID
+
     @GetMapping("/{id}")
     public ResponseEntity<Doador> buscarPorId(@PathVariable Long id) {
         Optional<Doador> doador = repository.findById(id);
@@ -72,6 +64,16 @@ public class DoadorController {
                      .orElse(ResponseEntity.notFound().build());
     }
 
+    // ✅ Adiciona este método:
+    @GetMapping("/cpf/{cpf}")
+    public ResponseEntity<?> buscarPorCpf(@PathVariable String cpf) {
+        Optional<Doador> doador = repository.findByCpf(cpf);
+        if (doador.isPresent()) {
+            return ResponseEntity.ok(doador.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Doador não encontrado.");
+        }
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> atualizarDoador(@PathVariable Long id, @RequestBody Doador doadorAtualizado) {
@@ -88,11 +90,9 @@ public class DoadorController {
                 doador.setTelefone(doadorAtualizado.getTelefone());
                 doador.setEmail(doadorAtualizado.getEmail());
                 doador.setTipoSanguineo(doadorAtualizado.getTipoSanguineo());
-
                 repository.save(doador);
                 return ResponseEntity.ok(doador);
             })
             .orElse(ResponseEntity.notFound().build());
     }
-
 }

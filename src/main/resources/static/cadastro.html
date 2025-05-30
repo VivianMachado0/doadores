@@ -5,14 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Doador</title>
     <style>
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
         body {
             font-family: Arial, sans-serif;
             background: #f0f2f5;
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
@@ -40,11 +37,7 @@
             width: 100%;
             max-width: 400px;
         }
-        h2 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 20px;
-        }
+        h2 { text-align: center; color: #333; margin-bottom: 20px; }
         label {
             display: block;
             margin-top: 15px;
@@ -64,9 +57,7 @@
             align-items: center;
             margin-top: 15px;
         }
-        .checkbox input {
-            margin-right: 10px;
-        }
+        .checkbox input { margin-right: 10px; }
         .privacy-link {
             color: #007bff;
             text-decoration: none;
@@ -85,61 +76,36 @@
             cursor: pointer;
             transition: background 0.3s;
         }
-        button:hover {
-            background: #218838;
-        }
+        button:hover { background: #218838; }
         .message {
             margin-top: 15px;
             text-align: center;
             font-weight: 600;
         }
         @media (max-width: 500px) {
-            .form-box {
-                padding: 20px;
-            }
-            header {
-                font-size: 1.2em;
-                padding: 15px 0;
-            }
+            .form-box { padding: 20px; }
+            header { font-size: 1.2em; padding: 15px 0; }
         }
-        
         .modal {
-    display: none; 
-    position: fixed; 
-    z-index: 1000; 
-    left: 0; 
-    top: 0; 
-    width: 100%; 
-    height: 100%; 
-    overflow: auto; 
-    background-color: rgba(0,0,0,0.5);
-}
-
-.modal-content {
-    background-color: #fff;
-    margin: 10% auto;
-    padding: 20px;
-    border-radius: 10px;
-    width: 80%;
-    max-width: 500px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    position: relative;
-}
-
-.close {
-    color: #aaa;
-    position: absolute;
-    right: 15px;
-    top: 10px;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.close:hover {
-    color: #000;
-}
-        
+            display: none; position: fixed; z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            overflow: auto; background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto; padding: 20px;
+            border-radius: 10px; width: 80%;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        .close {
+            color: #aaa; position: absolute;
+            right: 15px; top: 10px;
+            font-size: 28px; font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover { color: #000; }
     </style>
 </head>
 <body>
@@ -147,7 +113,7 @@
 <header>Cadastro de Doador de Sangue</header>
 
 <div class="container">
-    <div class="form-box">
+    <div class="form-box" id="formContainer">
         <h2>Preencha seus dados</h2>
         <form id="doadorForm">
             <label for="nome">Nome:</label>
@@ -202,15 +168,13 @@
             <div class="message" id="message"></div>
         </form>
     </div>
-    <div class="container" id="successContainer" style="display:none;">
-    <div class="form-box">
+
+    <div class="form-box" id="successContainer" style="display:none;">
         <h2>Obrigado pelo seu cadastro!</h2>
         <p>O seu cadastro foi realizado com sucesso.</p>
         <button onclick="novoCadastro()">Cadastrar Novo</button>
         <button onclick="consultarCadastro()">Consultar Cadastro pelo CPF</button>
     </div>
-</div>
-    
 </div>
 
 <div id="politicaModal" class="modal">
@@ -222,14 +186,15 @@
     <p>Ao marcar o aceite, você concorda com a coleta e o tratamento de seus dados conforme esta Política e a LGPD.</p>
   </div>
 </div>
-    <!-- Todo o conteúdo HTML acima -->
 
-   <script>
+<script>
     const form = document.getElementById('doadorForm');
     const message = document.getElementById('message');
     const btnSubmit = document.getElementById('btnSubmit');
     const aceite = document.getElementById('aceite');
     const politicaModal = document.getElementById('politicaModal');
+    const formContainer = document.getElementById('formContainer');
+    const successContainer = document.getElementById('successContainer');
 
     const urlParams = new URLSearchParams(window.location.search);
     const doadorId = urlParams.get('id');
@@ -262,17 +227,13 @@
         try {
             const res = await fetch(`https://doadores-spring.onrender.com/doadores/${id}`);
             if (!res.ok) throw new Error('Erro ao carregar dados.');
-
             const doador = await res.json();
-
             Object.keys(doador).forEach(key => {
                 if (form[key]) {
                     form[key].value = doador[key];
                 }
             });
-
             form.cpf.disabled = true;
-
         } catch (err) {
             exibirMensagem(err.message);
         }
@@ -280,25 +241,18 @@
 
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
-
         if (!aceite.checked) {
             exibirMensagem('Você deve aceitar a Política de Privacidade para continuar.');
             return;
         }
-
         btnSubmit.disabled = true;
-
         const cpf = form.cpf.value;
 
         try {
             if (!doadorId) {
                 const checkResponse = await fetch(`https://doadores-spring.onrender.com/doadores/cpf/${cpf}`);
-
                 if (checkResponse.ok) {
                     const existingDoador = await checkResponse.json();
-                    console.log('Verificação CPF:', existingDoador);
-
-                    // Ajuste conforme o retorno real da API
                     if (existingDoador && (existingDoador.id || (Array.isArray(existingDoador) && existingDoador.length > 0))) {
                         exibirMensagem('CPF já cadastrado!');
                         btnSubmit.disabled = false;
@@ -336,11 +290,8 @@
             });
 
             if (res.ok) {
-                exibirMensagem(doadorId ? 'Doador atualizado com sucesso!' : 'Doador cadastrado com sucesso!', 'green');
-
-                setTimeout(() => {
-                    window.location.href = 'listaDoadores.html';  // <-- ajuste para sua página de destino
-                }, 2000);
+                formContainer.style.display = 'none';
+                successContainer.style.display = 'flex';
             } else {
                 const errorData = await res.json();
                 throw new Error(errorData.message || 'Erro ao enviar dados');
@@ -351,8 +302,17 @@
             btnSubmit.disabled = false;
         }
     });
+
+    function novoCadastro() {
+        form.reset();
+        successContainer.style.display = 'none';
+        formContainer.style.display = 'flex';
+        btnSubmit.disabled = false;
+    }
+
+    function consultarCadastro() {
+        alert('Funcionalidade de consulta ainda não implementada.');
+    }
 </script>
-
-
 </body>
 </html>
