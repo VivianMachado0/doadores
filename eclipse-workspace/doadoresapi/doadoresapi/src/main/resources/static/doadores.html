@@ -128,69 +128,6 @@ tbody td:last-child button:hover {
 
 /* Responsivo: para celular */
 
-@media (max-width: 600px) {
-  .filters {
-    display: flex;
-    flex-wrap: nowrap; /* impede quebra para outra linha */
-    gap: 0.5rem; /* reduz o espaço entre os filtros */
-    overflow-x: auto;  /* adiciona barra de rolagem se não couber */
-    padding-bottom: 0.5rem; /* espaço extra para rolagem confortável */
-  }
-
-  table, thead, tbody, th, td, tr {
-    display: block;
-    width: 100%;
-  }
-
-  thead tr {
-    position: absolute;
-    top: -9999px;
-    left: -9999px;
-  }
-
-  tbody tr {
-    margin-bottom: 1rem; /* menos espaço entre os blocos */
-    padding: 0.8rem; /* menos preenchimento */
-    border-radius: 10px; /* um pouco menos arredondado */
-    background: white;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-  }
-
-  tbody td {
-    position: relative;
-    padding-left: 45%; /* menos espaço lateral */
-    text-align: left;
-    border: none;
-    border-bottom: 1px solid #eee;
-    font-size: 0.85rem; /* menor fonte para celular */
-    word-break: break-word;
-  }
-
-  tbody td:last-child {
-    border-bottom: 0;
-    padding-top: 0.6rem;
-  }
-
-  tbody td:before {
-    content: attr(data-label);
-    position: absolute;
-    left: 0.5rem; /* menos espaço lateral */
-    top: 50%;
-    transform: translateY(-50%);
-    font-weight: 600;
-    font-size: 0.75rem; /* menor fonte para label */
-    color: #28a745;
-    white-space: nowrap;
-  }
-
-  tbody td:last-child button {
-    width: 100%;
-    padding: 0.4rem; /* mais compacto */
-    font-size: 0.85rem; /* menor fonte */
-    border-radius: 6px; /* menos arredondado */
-  }
-}
-
 </style>
 </head>
 <body>
