@@ -286,6 +286,7 @@ tbody td:last-child button:hover {
     const cidade = document.getElementById('cidade').value.trim();
     const bairro = document.getElementById('bairro').value.trim();
 
+    /*
     // Simulação de busca
     const todosDoadores = [
       {id: 1, nome: "João Silva", tipoSanguineo: "A+", bairro: "Centro", cidade: "São Paulo", telefone: "(11) 9876-5432", email: "joao@exemplo.com"},
@@ -302,9 +303,9 @@ tbody td:last-child button:hover {
     });
     
     renderizar(resultados);
-    
+    */
     // Em produção real:
-    /*
+  
     if (!tipo && !cidade && !bairro) {
       tabela.innerHTML = '<tr><td colspan="7" class="empty-state">Informe pelo menos um filtro</td></tr>';
       return;
@@ -322,12 +323,12 @@ tbody td:last-child button:hover {
     } catch (err) {
       alert('Erro na busca');
     }
-    */
+   
   }
 
   function editar(id) {
-    alert(`Editar doador ID ${id} - Funcionalidade de demonstração`);
-    // Em produção: window.location.href = `cadastro.html?id=${id}`;
+   // alert(`Editar doador ID ${id} - Funcionalidade de demonstração`);
+     window.location.href = `cadastro.html?id=${id}`;
   }
 
   // Event listeners
