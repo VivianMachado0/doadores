@@ -339,7 +339,7 @@
                 exibirMensagem(doadorId ? 'Doador atualizado com sucesso!' : 'Doador cadastrado com sucesso!', 'green');
 
                 setTimeout(() => {
-                    window.location.href = 'listaDoadores.html';  // <-- ajuste para sua página de destino
+                    window.location.href = 'confirmacao.html'; 
                 }, 2000);
             } else {
                 const errorData = await res.json();
