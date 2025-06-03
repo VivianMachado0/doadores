@@ -287,7 +287,7 @@ function exibirMensagem(texto, tipo = 'error') {
 
 async function carregarDoador(id) {
 	try {
-		const res = await fetch(`https://doadores-spring.onrender.com/doadores/${id}`);
+		const res = await fetch('https://doadores-spring.onrender.com/doadores/${id}');
 		if (!res.ok) throw new Error('Erro ao carregar dados.');
 		const doador = await res.json();
 		Object.keys(doador).forEach(key => {
@@ -312,7 +312,7 @@ form.addEventListener('submit', async function(e) {
 
 	try {
 		if (!doadorId) {
-			const checkResponse = await fetch(`https://doadores-spring.onrender.com/doadores/cpf/${cpf}`);
+			const checkResponse = await fetch('https://doadores-spring.onrender.com/doadores/cpf/${cpf}');
 			if (checkResponse.ok) {
 				const existingDoador = await checkResponse.json();
 				if (existingDoador && (existingDoador.id || (Array.isArray(existingDoador) && existingDoador.length > 0))) {
@@ -339,7 +339,7 @@ form.addEventListener('submit', async function(e) {
 			tipoSanguineo: form.tipoSanguineo.value
 		};
 
-		const url = doadorId ? `https://doadores-spring.onrender.com/doadores/${doadorId}` : 'https://doadores-spring.onrender.com/doadores';
+		const url = doadorId ? 'https://doadores-spring.onrender.com/doadores/${doadorId}' : 'https://doadores-spring.onrender.com/doadores';
 		const method = doadorId ? 'PUT' : 'POST';
 
 		const res = await fetch(url, {
