@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lista de Doadores</title>
 <style>
-/* RESET ULTRA COMPACTO */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -38,7 +37,6 @@ header {
   padding: 0.8rem;
 }
 
-/* FILTROS ULTRA COMPACTOS - ALTURA MÍNIMA */
 .filters {
   display: flex;
   flex-wrap: wrap;
@@ -54,7 +52,7 @@ select, input[type="text"] {
   border: 1px solid #d1d5db;
   flex: 1 1 100px;
   min-width: 80px;
-  height: 26px; /* Altura mínima possível */
+  height: 26px;
   background: #fff;
 }
 
@@ -80,7 +78,6 @@ button:hover {
   background: #218838;
 }
 
-/* TABELA COM ROLAGEM HORIZONTAL */
 .table-container {
   overflow-x: auto;
   margin-top: 0.6rem;
@@ -122,17 +119,6 @@ tbody tr:hover {
   background: #e5f7e5;
 }
 
-tbody td:last-child button {
-  background-color: #007bff;
-  padding: 0.15rem 0.4rem;
-  font-size: 0.72rem;
-  border-radius: 2px;
-}
-
-tbody td:last-child button:hover {
-  background-color: #0056b3;
-}
-
 .empty-state {
   text-align: center;
   padding: 1rem;
@@ -140,25 +126,23 @@ tbody td:last-child button:hover {
   font-style: italic;
 }
 
-/* RESPONSIVIDADE PARA MOBILE */
 @media (max-width: 768px) {
   .container {
     padding: 0.6rem;
     margin: 0.6rem;
   }
   
- .filters {
-  gap: 0.3rem;
-  height: 2rem; /* Altura pequena, ajuste conforme necessário */
-  overflow: hidden; /* Opcional, evita que o conteúdo ultrapasse a altura */
-}
+  .filters {
+    gap: 0.3rem;
+    height: 2rem;
+    overflow: hidden;
+  }
 
-  
   select, input[type="text"], button {
     width: 100%;
     height: 26px;
   }
-  
+
   header {
     font-size: 1rem;
     padding: 0.5rem;
@@ -169,15 +153,24 @@ tbody td:last-child button:hover {
   body {
     font-size: 13px;
   }
-  
+
   header {
     font-size: 0.9rem;
   }
-  
+
   th, td {
     padding: 0.4rem;
     font-size: 0.75rem;
   }
+}
+
+/* Estilo para botão Excluir */
+.btn-excluir {
+  background-color: #dc3545;
+}
+
+.btn-excluir:hover {
+  background-color: #a71d2a;
 }
 </style>
 </head>
@@ -186,7 +179,6 @@ tbody td:last-child button:hover {
 <header>Lista de Doadores</header>
 
 <div class="container">
-  <!-- ÁREA DE FILTROS ULTRA COMPACTOS -->
   <div class="filters">
     <select id="tipoSanguineo" aria-label="Tipo sanguíneo">
       <option value="">Tipo Sanguíneo</option>
@@ -203,9 +195,7 @@ tbody td:last-child button:hover {
     <input type="text" id="cidade" placeholder="Cidade" aria-label="Cidade">
     <input type="text" id="bairro" placeholder="Bairro" aria-label="Bairro">
 
-    <button onclick="listar()" aria-label="Listar todos">
-      Listar Todos
-    </button>
+    <button onclick="listar()" aria-label="Listar todos">Listar Todos</button>
   </div>
 
   <div class="table-container">
@@ -222,122 +212,104 @@ tbody td:last-child button:hover {
         </tr>
       </thead>
       <tbody>
-        <!-- Dados serão inseridos via JavaScript -->
+        <!-- Dados inseridos via JavaScript -->
       </tbody>
     </table>
   </div>
 </div>
 
 <script>
-  const tabela = document.querySelector('#tabela tbody');
+const tabela = document.querySelector('#tabela tbody');
 
-  // Função para renderizar dados
-  function renderizar(dados) {
-    tabela.innerHTML = '';
-    if (dados.length === 0) {
-      tabela.innerHTML = '<tr><td colspan="7" class="empty-state">Nenhum doador encontrado</td></tr>';
-      return;
-    }
-    
-    dados.forEach(doador => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${doador.nome}</td>
-        <td>${doador.tipoSanguineo}</td>
-        <td>${doador.bairro}</td>
-        <td>${doador.cidade}</td>
-        <td>${doador.telefone}</td>
-        <td>${doador.email}</td>
-        <td><button onclick="editar('${doador.id}')">Editar</button></td>
-      `;
-      tabela.appendChild(row);
-    });
+function renderizar(dados) {
+  tabela.innerHTML = '';
+  if (dados.length === 0) {
+    tabela.innerHTML = '<tr><td colspan="7" class="empty-state">Nenhum doador encontrado</td></tr>';
+    return;
   }
-
-  // Função para listar todos os doadores
-  async function listar() {
-    try {
-      // Simulando dados para demonstração
-      /*
-      const dadosDemo = [
-        {id: 1, nome: "João Silva", tipoSanguineo: "A+", bairro: "Centro", cidade: "São Paulo", telefone: "(11) 9876-5432", email: "joao@exemplo.com"},
-        {id: 2, nome: "Maria Oliveira", tipoSanguineo: "O-", bairro: "Jardins", cidade: "Rio de Janeiro", telefone: "(21) 99876-5432", email: "maria@exemplo.com"},
-        {id: 3, nome: "Carlos Santos", tipoSanguineo: "B+", bairro: "Copacabana", cidade: "Rio de Janeiro", telefone: "(21) 98765-1234", email: "carlos@exemplo.com"},
-        {id: 4, nome: "Ana Pereira", tipoSanguineo: "AB-", bairro: "Barra", cidade: "Rio de Janeiro", telefone: "(21) 91234-5678", email: "ana@exemplo.com"},
-        {id: 5, nome: "Pedro Costa", tipoSanguineo: "A-", bairro: "Moema", cidade: "São Paulo", telefone: "(11) 92345-6789", email: "pedro@exemplo.com"}
-      ];
-      
-      renderizar(dadosDemo);
-      */
-      // Em produção real, usar:
-      
-      const res = await fetch('https://doadores-spring.onrender.com/doadores');
-      const dados = await res.json();
-      renderizar(dados);
-      
-    } catch (err) {
-      alert('Erro ao carregar dados');
-    }
-  }
-
-  // Função de busca
-  async function buscar() {
-    const tipo = document.getElementById('tipoSanguineo').value;
-    const cidade = document.getElementById('cidade').value.trim();
-    const bairro = document.getElementById('bairro').value.trim();
-
-    /*
-    // Simulação de busca
-    const todosDoadores = [
-      {id: 1, nome: "João Silva", tipoSanguineo: "A+", bairro: "Centro", cidade: "São Paulo", telefone: "(11) 9876-5432", email: "joao@exemplo.com"},
-      {id: 2, nome: "Maria Oliveira", tipoSanguineo: "O-", bairro: "Jardins", cidade: "Rio de Janeiro", telefone: "(21) 99876-5432", email: "maria@exemplo.com"},
-      {id: 3, nome: "Carlos Santos", tipoSanguineo: "B+", bairro: "Copacabana", cidade: "Rio de Janeiro", telefone: "(21) 98765-1234", email: "carlos@exemplo.com"},
-      {id: 4, nome: "Ana Pereira", tipoSanguineo: "AB-", bairro: "Barra", cidade: "Rio de Janeiro", telefone: "(21) 91234-5678", email: "ana@exemplo.com"},
-      {id: 5, nome: "Pedro Costa", tipoSanguineo: "A-", bairro: "Moema", cidade: "São Paulo", telefone: "(11) 92345-6789", email: "pedro@exemplo.com"}
-    ];
-    
-    const resultados = todosDoadores.filter(doador => {
-      return (!tipo || doador.tipoSanguineo === tipo) &&
-             (!cidade || doador.cidade.includes(cidade)) &&
-             (!bairro || doador.bairro.includes(bairro));
-    });
-    
-    renderizar(resultados);
-    */
-    // Em produção real:
   
-    if (!tipo && !cidade && !bairro) {
-      tabela.innerHTML = '<tr><td colspan="7" class="empty-state">Informe pelo menos um filtro</td></tr>';
-      return;
-    }
+  dados.forEach(doador => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${doador.nome}</td>
+      <td>${doador.tipoSanguineo}</td>
+      <td>${doador.bairro}</td>
+      <td>${doador.cidade}</td>
+      <td>${doador.telefone}</td>
+      <td>${doador.email}</td>
+      <td>
+        <button onclick="editar('${doador.id}')">Editar</button>
+        <button class="btn-excluir" onclick="excluir('${doador.id}')">Excluir</button>
+      </td>
+    `;
+    tabela.appendChild(row);
+  });
+}
 
-    try {
-      const url = new URL('https://doadores-spring.onrender.com/doadores/buscar');
-      if (tipo) url.searchParams.append('tipoSanguineo', tipo);
-      if (cidade) url.searchParams.append('cidade', cidade);
-      if (bairro) url.searchParams.append('bairro', bairro);
+async function listar() {
+  try {
+    const res = await fetch('https://doadores-spring.onrender.com/doadores');
+    const dados = await res.json();
+    renderizar(dados);
+  } catch (err) {
+    alert('Erro ao carregar dados');
+  }
+}
 
-      const res = await fetch(url);
-      const dados = await res.json();
-      renderizar(dados);
-    } catch (err) {
-      alert('Erro na busca');
-    }
-   
+async function buscar() {
+  const tipo = document.getElementById('tipoSanguineo').value;
+  const cidade = document.getElementById('cidade').value.trim();
+  const bairro = document.getElementById('bairro').value.trim();
+
+  if (!tipo && !cidade && !bairro) {
+    tabela.innerHTML = '<tr><td colspan="7" class="empty-state">Informe pelo menos um filtro</td></tr>';
+    return;
   }
 
-  function editar(id) {
-   // alert(`Editar doador ID ${id} - Funcionalidade de demonstração`);
-     window.location.href = `cadastro.html?id=${id}`;
+  try {
+    const url = new URL('https://doadores-spring.onrender.com/doadores/buscar');
+    if (tipo) url.searchParams.append('tipoSanguineo', tipo);
+    if (cidade) url.searchParams.append('cidade', cidade);
+    if (bairro) url.searchParams.append('bairro', bairro);
+
+    const res = await fetch(url);
+    const dados = await res.json();
+    renderizar(dados);
+  } catch (err) {
+    alert('Erro na busca');
+  }
+}
+
+function editar(id) {
+  window.location.href = `cadastro.html?id=${id}`;
+}
+
+async function excluir(id) {
+  if (!confirm("Tem certeza que deseja excluir este doador?")) {
+    return;
   }
 
-  // Event listeners
-  document.getElementById('tipoSanguineo').addEventListener('change', buscar);
-  document.getElementById('cidade').addEventListener('input', buscar);
-  document.getElementById('bairro').addEventListener('input', buscar);
+  try {
+    const res = await fetch('https://doadores-spring.onrender.com/doadores/${id}', {
+      method: 'DELETE'
+    });
 
-  // Inicialização
-  listar();
+    if (res.ok) {
+      alert("Doador excluído com sucesso.");
+      listar();
+    } else {
+      alert("Erro ao excluir doador.");
+    }
+  } catch (err) {
+    alert("Erro de rede ao excluir doador.");
+  }
+}
+
+document.getElementById('tipoSanguineo').addEventListener('change', buscar);
+document.getElementById('cidade').addEventListener('input', buscar);
+document.getElementById('bairro').addEventListener('input', buscar);
+
+listar();
 </script>
 </body>
 </html>
