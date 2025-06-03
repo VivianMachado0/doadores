@@ -3,13 +3,10 @@ package com.doadorapi.controller;
 import com.doadorapi.model.Doador;
 import com.doadorapi.repository.DoadorRepository;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -24,19 +21,9 @@ public class DoadorController {
 
     @PostMapping
     public ResponseEntity<?> cadastrarDoador(@RequestBody Doador doador) {
-        Optional<Doador> existente = repository.findByCpf(doador.getCpf());
-        if (existente.isPresent()) {
-    	    Map<String, Object> erro = new HashMap<>();
-    	    erro.put("error", "CPF já cadastrado.");
-    	    erro.put("doadorId", existente.get().getId());
-    	    return ResponseEntity.status(HttpStatus.CONFLICT).body(erro);
-    	}
-
         Doador salvo = repository.save(doador);
         return ResponseEntity.ok(salvo);
     }
-
-  
 
     @GetMapping
     public List<Doador> listarDoadores() {
@@ -71,37 +58,20 @@ public class DoadorController {
                      .orElse(ResponseEntity.notFound().build());
     }
 
-    // ✅ Adiciona este método:
-    @GetMapping("/cpf/{cpf}")
-    public ResponseEntity<?> buscarPorCpf(@PathVariable String cpf) {
-        Optional<Doador> doador = repository.findByCpf(cpf);
-        if (doador.isPresent()) {
-            return ResponseEntity.ok(doador.get());
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Doador não encontrado.");
-        }
-    }
-
     @PutMapping("/{id}")
     public ResponseEntity<?> atualizarDoador(@PathVariable Long id, @RequestBody Doador doadorAtualizado) {
         return repository.findById(id)
             .map(doadorExistente -> {
                 doadorExistente.setNome(doadorAtualizado.getNome());
-                doadorExistente.setCpf(doadorAtualizado.getCpf());
                 doadorExistente.setRua(doadorAtualizado.getRua());
                 doadorExistente.setNumero(doadorAtualizado.getNumero());
                 doadorExistente.setBairro(doadorAtualizado.getBairro());
                 doadorExistente.setCidade(doadorAtualizado.getCidade());
-                doadorExistente.setEstado(doadorAtualizado.getEstado());
-                doadorExistente.setCep(doadorAtualizado.getCep());
                 doadorExistente.setTelefone(doadorAtualizado.getTelefone());
-                doadorExistente.setEmail(doadorAtualizado.getEmail());
                 doadorExistente.setTipoSanguineo(doadorAtualizado.getTipoSanguineo());
                 repository.save(doadorExistente);
                 return ResponseEntity.ok(doadorExistente);
             })
             .orElse(ResponseEntity.notFound().build());
     }
-
-    
 }
