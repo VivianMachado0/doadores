@@ -74,4 +74,14 @@ public class DoadorController {
             })
             .orElse(ResponseEntity.notFound().build());
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> excluirDoador(@PathVariable Long id) {
+        return repository.findById(id)
+            .map(doador -> {
+                repository.delete(doador);
+                return ResponseEntity.ok().build();
+            })
+            .orElse(ResponseEntity.notFound().build());
+    }
 }

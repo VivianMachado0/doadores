@@ -207,7 +207,6 @@ tbody tr:hover {
           <th>Bairro</th>
           <th>Cidade</th>
           <th>Telefone</th>
-          <th>Email</th>
           <th>Ações</th>
         </tr>
       </thead>
@@ -236,7 +235,6 @@ function renderizar(dados) {
       <td>${doador.bairro}</td>
       <td>${doador.cidade}</td>
       <td>${doador.telefone}</td>
-      <td>${doador.email}</td>
       <td>
         <button onclick="editar('${doador.id}')">Editar</button>
         <button class="btn-excluir" onclick="excluir('${doador.id}')">Excluir</button>
