@@ -201,6 +201,29 @@ tbody tr:hover {
   margin: 10px;
   padding: 10px 20px;
 }
+
+.btn-novo {
+  width: auto; /* Ajusta ao conteúdo */
+  padding: 10px 100px; /* Espaçamento interno */
+  background: #007bff; /* Azul padrão */
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s;
+
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+  
+.btn-novo:hover {
+  background: #0056b3; /* Azul mais escuro no hover */
+}
+
+
 </style>
 </head>
 <body>
@@ -225,6 +248,9 @@ tbody tr:hover {
     <input type="text" id="bairro" placeholder="Bairro" aria-label="Bairro">
 
     <button onclick="listar()" aria-label="Listar todos">Listar Todos</button>
+   
+  
+    
   </div>
 
   <div class="table-container">
@@ -243,6 +269,13 @@ tbody tr:hover {
         <!-- Dados inseridos via JavaScript -->
       </tbody>
     </table>
+    
+  </div>
+  
+   <div style="text-align: center; margin: 1rem 0;">
+    <a href="cadastro.html">
+      <button class="btn-novo" aria-label="Cadastrar novo">Cadastrar Novo</button>
+    </a>
   </div>
   
   
