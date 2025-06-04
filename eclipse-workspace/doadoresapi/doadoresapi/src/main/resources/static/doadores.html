@@ -237,8 +237,7 @@ function renderizar(dados) {
       <td>${doador.telefone}</td>
       <td>
         <button onclick="editar('${doador.id}')">Editar</button>
-        <button onclick="excluir('${doador.id}')">Excluir</button>
-
+        <button class="btn-excluir" onclick="excluir('${doador.id}')">Excluir</button>
       </td>
     `;
     tabela.appendChild(row);
@@ -284,28 +283,27 @@ function editar(id) {
 }
 
 async function excluir(id) {
-	console.log('ID do doador:', doador.id);
-	
-	  if (!confirm("Tem certeza que deseja excluir este doador?")) {
-	    return;
-	  }
+  console.log('ID do doador:', id);
 
-	  try {
-	    const res = await fetch(`https://doadores-spring.onrender.com/doadores/${id}`, {
-	      method: 'DELETE'
-	    });
+  if (!confirm("Tem certeza que deseja excluir este doador?")) {
+    return;
+  }
 
-	    if (res.ok) {
-	      alert("Doador excluído com sucesso.");
-	      listar();
-	    } else {
-	      alert("Erro ao excluir doador.");
-	    }
-	  } catch (err) {
-	    alert("Erro de rede ao excluir doador.");
-	  }
-	}
+  try {
+    const res = await fetch(`https://doadores-spring.onrender.com/doadores/${id}`, {
+      method: 'DELETE'
+    });
 
+    if (res.ok) {
+      alert("Doador excluído com sucesso.");
+      listar();
+    } else {
+      alert("Erro ao excluir doador.");
+    }
+  } catch (err) {
+    alert("Erro de rede ao excluir doador.");
+  }
+}
 
 document.getElementById('tipoSanguineo').addEventListener('change', buscar);
 document.getElementById('cidade').addEventListener('input', buscar);
