@@ -72,7 +72,12 @@ button {
   border-radius: 3px;
   height: 26px;
   white-space: nowrap;
+  display: inline-block; /* Evita que fique ocupando largura total */
+  max-width: 100px; /* Limita o tamanho */
+  overflow: hidden; /* Esconde excesso */
+  text-overflow: ellipsis;
 }
+
 
 button:hover {
   background: #218838;
@@ -172,6 +177,30 @@ tbody tr:hover {
 .btn-excluir:hover {
   background-color: #a71d2a;
 }
+
+
+.modal {
+  display: none; 
+  position: fixed; 
+  z-index: 999; 
+  left: 0; top: 0; 
+  width: 100%; height: 100%; 
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  background: #fff;
+  margin: 15% auto;
+  padding: 20px;
+  width: 300px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.modal-actions button {
+  margin: 10px;
+  padding: 10px 20px;
+}
 </style>
 </head>
 <body>
@@ -215,8 +244,9 @@ tbody tr:hover {
       </tbody>
     </table>
   </div>
+  
+  
 </div>
-
 <script>
 const tabela = document.querySelector('#tabela tbody');
 
@@ -254,6 +284,44 @@ async function listar() {
   }
 }
 
+const confirmModal = document.getElementById('confirmModal');
+const btnConfirm = document.getElementById('btnConfirm');
+const btnCancel = document.getElementById('btnCancel');
+
+let idParaExcluir = null;
+
+function mostrarConfirmacao(id) {
+  idParaExcluir = id;
+  confirmModal.style.display = 'block';
+}
+
+btnConfirm.addEventListener('click', async function() {
+  confirmModal.style.display = 'none';
+  if (!idParaExcluir) return;
+
+  try {
+    const res = await fetch(`https://doadores-spring.onrender.com/doadores/${idParaExcluir}`, {
+      method: 'DELETE'
+    });
+
+    if (res.ok) {
+      alert("Doador excluído com sucesso.");
+      listar();
+    } else {
+      alert("Erro ao excluir doador.");
+    }
+  } catch (err) {
+    alert("Erro de rede ao excluir doador.");
+  } finally {
+    idParaExcluir = null;
+  }
+});
+
+btnCancel.addEventListener('click', function() {
+  confirmModal.style.display = 'none';
+  idParaExcluir = null;
+});
+
 async function buscar() {
   const tipo = document.getElementById('tipoSanguineo').value;
   const cidade = document.getElementById('cidade').value.trim();
@@ -282,27 +350,8 @@ function editar(id) {
   window.location.href = `cadastro.html?id=${id}`;
 }
 
-async function excluir(id) {
-  console.log('ID do doador:', id);
-
-  if (!confirm("Tem certeza que deseja excluir este doador?")) {
-    return;
-  }
-
-  try {
-    const res = await fetch(`https://doadores-spring.onrender.com/doadores/${id}`, {
-      method: 'DELETE'
-    });
-
-    if (res.ok) {
-      alert("Doador excluído com sucesso.");
-      listar();
-    } else {
-      alert("Erro ao excluir doador.");
-    }
-  } catch (err) {
-    alert("Erro de rede ao excluir doador.");
-  }
+function excluir(id) {
+  mostrarConfirmacao(id);
 }
 
 document.getElementById('tipoSanguineo').addEventListener('change', buscar);
@@ -311,5 +360,18 @@ document.getElementById('bairro').addEventListener('input', buscar);
 
 listar();
 </script>
+
+
+<div id="confirmModal" class="modal">
+  <div class="modal-content">
+    <p id="confirmMessage">Tem certeza que deseja excluir este doador?</p>
+    <div class="modal-actions">
+      <button id="btnConfirm">Sim</button>
+      <button id="btnCancel">Não</button>
+    </div>
+  </div>
+</div>
+
+
 </body>
 </html>

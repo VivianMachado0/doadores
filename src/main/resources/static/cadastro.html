@@ -249,6 +249,29 @@ const successContainer = document.getElementById('successContainer');
 const urlParams = new URLSearchParams(window.location.search);
 const doadorId = urlParams.get('id');
 
+async function carregarDoador(id) {
+	try {
+		const res = await fetch(`https://doadores-spring.onrender.com/doadores/${id}`);
+		if (!res.ok) {
+			throw new Error('Não foi possível carregar os dados do doador.');
+		}
+		const doador = await res.json();
+
+		// Preenchendo os campos do formulário
+		form.nome.value = doador.nome || '';
+		form.rua.value = doador.rua || '';
+		form.numero.value = doador.numero || '';
+		form.bairro.value = doador.bairro || '';
+		form.cidade.value = doador.cidade || '';
+		form.telefone.value = doador.telefone || '';
+		form.tipoSanguineo.value = doador.tipoSanguineo || '';
+
+	} catch (err) {
+		exibirMensagem(err.message);
+	}
+}
+
+
 if (doadorId) {
 	carregarDoador(doadorId);
 	btnSubmit.textContent = 'Atualizar';
