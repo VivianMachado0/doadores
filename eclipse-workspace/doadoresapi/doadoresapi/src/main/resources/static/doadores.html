@@ -207,7 +207,6 @@ tbody tr:hover {
           <th>Bairro</th>
           <th>Cidade</th>
           <th>Telefone</th>
-          <th>Email</th>
           <th>Ações</th>
         </tr>
       </thead>
@@ -236,10 +235,10 @@ function renderizar(dados) {
       <td>${doador.bairro}</td>
       <td>${doador.cidade}</td>
       <td>${doador.telefone}</td>
-      <td>${doador.email}</td>
       <td>
         <button onclick="editar('${doador.id}')">Editar</button>
-        <button class="btn-excluir" onclick="excluir('${doador.id}')">Excluir</button>
+        <button onclick="excluir('${doador.id}')">Excluir</button>
+
       </td>
     `;
     tabela.appendChild(row);
@@ -285,25 +284,28 @@ function editar(id) {
 }
 
 async function excluir(id) {
-  if (!confirm("Tem certeza que deseja excluir este doador?")) {
-    return;
-  }
+	console.log('ID do doador:', doador.id);
+	
+	  if (!confirm("Tem certeza que deseja excluir este doador?")) {
+	    return;
+	  }
 
-  try {
-    const res = await fetch('https://doadores-spring.onrender.com/doadores/${id}', {
-      method: 'DELETE'
-    });
+	  try {
+	    const res = await fetch(`https://doadores-spring.onrender.com/doadores/${id}`, {
+	      method: 'DELETE'
+	    });
 
-    if (res.ok) {
-      alert("Doador excluído com sucesso.");
-      listar();
-    } else {
-      alert("Erro ao excluir doador.");
-    }
-  } catch (err) {
-    alert("Erro de rede ao excluir doador.");
-  }
-}
+	    if (res.ok) {
+	      alert("Doador excluído com sucesso.");
+	      listar();
+	    } else {
+	      alert("Erro ao excluir doador.");
+	    }
+	  } catch (err) {
+	    alert("Erro de rede ao excluir doador.");
+	  }
+	}
+
 
 document.getElementById('tipoSanguineo').addEventListener('change', buscar);
 document.getElementById('cidade').addEventListener('input', buscar);

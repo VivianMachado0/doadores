@@ -237,7 +237,8 @@ function renderizar(dados) {
       <td>${doador.telefone}</td>
       <td>
         <button onclick="editar('${doador.id}')">Editar</button>
-        <button class="btn-excluir" onclick="excluir('${doador.id}')">Excluir</button>
+        <button onclick="excluir('${doador.id}')">Excluir</button>
+
       </td>
     `;
     tabela.appendChild(row);
@@ -283,6 +284,8 @@ function editar(id) {
 }
 
 async function excluir(id) {
+	console.log('ID do doador:', doador.id);
+	
 	  if (!confirm("Tem certeza que deseja excluir este doador?")) {
 	    return;
 	  }
