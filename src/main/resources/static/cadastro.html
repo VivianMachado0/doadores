@@ -34,7 +34,7 @@ header {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	padding: 20px;
+	padding: 10px;
 }
 
 .form-box {
@@ -169,7 +169,28 @@ button:hover {
 .close:hover {
 	color: #000;
 }
+
+
+
+.btn-consultar {
+  width: auto; /* Ajusta ao conteúdo */
+  padding: 10px 20px; /* Espaçamento interno */
+  background: #007bff; /* Azul padrão */
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-consultar:hover {
+  background: #0056b3; /* Azul mais escuro no hover */
+}
 </style>
+
+
 </head>
 <body>
 
@@ -235,8 +256,101 @@ button:hover {
 		<p>Coletamos o seu nome e informações de contato exclusivamente para gerenciar o cadastro de doadores de sangue.</p>
 	</div>
 </div>
+<!-- Botão para consultar cadastros -->
+<div class="container">
+  <button class="btn-consultar" onclick="abrirLogin()">Consultar Cadastros</button>
+</div>
 
+<!-- Modal de Login -->
+<div id="loginModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="fecharLogin()">&times;</span>
+    <h2>Login</h2>
+    <label for="usuario">Usuário:</label>
+    <input type="text" id="usuario" />
+
+    <label for="senha">Senha:</label>
+    <input type="password" id="senha" />
+
+    <button onclick="validarLogin()">Entrar</button>
+  </div>
+</div>
+
+<!-- Modal de Lista de Doadores -->
+<div id="listaModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="fecharLista()">&times;</span>
+    <h2>Lista de Doadores</h2>
+    <ul id="listaDoadores"></ul>
+  </div>
+</div>
 <script>
+
+const loginModal = document.getElementById('loginModal');
+const listaModal = document.getElementById('listaModal');
+const listaDoadores = document.getElementById('listaDoadores');
+
+function abrirLogin() {
+  loginModal.style.display = 'block';
+}
+
+function fecharLogin() {
+  loginModal.style.display = 'none';
+}
+
+function fecharLista() {
+  listaModal.style.display = 'none';
+}
+
+async function validarLogin() {
+	  const usuario = document.getElementById('usuario').value;
+	  const senha = document.getElementById('senha').value;
+
+	  if (usuario === 'administrador' && senha === 'admveredinha') {
+	    fecharLogin();
+	    window.location.href = 'https://doadores-spring.onrender.com/doadores.html';
+	  } else {
+	    alert('Usuário ou senha incorretos!');
+	  }
+	}
+
+
+async function carregarDoadores() {
+  try {
+    const res = await fetch('https://doadores-spring.onrender.com/doadores');
+    if (!res.ok) {
+      throw new Error('Não foi possível carregar os doadores.');
+    }
+    const doadores = await res.json();
+
+    listaDoadores.innerHTML = '';
+
+    if (doadores.length === 0) {
+      listaDoadores.innerHTML = '<li>Nenhum doador cadastrado.</li>';
+    } else {
+      doadores.forEach(doador => {
+        const item = document.createElement('li');
+        item.textContent = `${doador.nome} - ${doador.cidade} - ${doador.tipoSanguineo}`;
+        listaDoadores.appendChild(item);
+      });
+    }
+
+    listaModal.style.display = 'block';
+
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+window.addEventListener('click', function(event) {
+  if (event.target === loginModal) {
+    fecharLogin();
+  }
+  if (event.target === listaModal) {
+    fecharLista();
+  }
+});
+
 const form = document.getElementById('doadorForm');
 const alertMessage = document.getElementById('alertMessage');
 const btnSubmit = document.getElementById('btnSubmit');
