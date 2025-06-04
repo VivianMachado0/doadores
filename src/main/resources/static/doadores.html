@@ -283,25 +283,26 @@ function editar(id) {
 }
 
 async function excluir(id) {
-  if (!confirm("Tem certeza que deseja excluir este doador?")) {
-    return;
-  }
+	  if (!confirm("Tem certeza que deseja excluir este doador?")) {
+	    return;
+	  }
 
-  try {
-    const res = await fetch('https://doadores-spring.onrender.com/doadores/${id}', {
-      method: 'DELETE'
-    });
+	  try {
+	    const res = await fetch(`https://doadores-spring.onrender.com/doadores/${id}`, {
+	      method: 'DELETE'
+	    });
 
-    if (res.ok) {
-      alert("Doador excluído com sucesso.");
-      listar();
-    } else {
-      alert("Erro ao excluir doador.");
-    }
-  } catch (err) {
-    alert("Erro de rede ao excluir doador.");
-  }
-}
+	    if (res.ok) {
+	      alert("Doador excluído com sucesso.");
+	      listar();
+	    } else {
+	      alert("Erro ao excluir doador.");
+	    }
+	  } catch (err) {
+	    alert("Erro de rede ao excluir doador.");
+	  }
+	}
+
 
 document.getElementById('tipoSanguineo').addEventListener('change', buscar);
 document.getElementById('cidade').addEventListener('input', buscar);
