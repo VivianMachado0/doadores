@@ -247,7 +247,7 @@ tbody tr:hover {
   
   
 </div>
-<script>
+<script defer>
 const tabela = document.querySelector('#tabela tbody');
 
 function renderizar(dados) {
@@ -284,23 +284,12 @@ async function listar() {
   }
 }
 
-const confirmModal = document.getElementById('confirmModal');
-const btnConfirm = document.getElementById('btnConfirm');
-const btnCancel = document.getElementById('btnCancel');
-
-let idParaExcluir = null;
-
-function mostrarConfirmacao(id) {
-  idParaExcluir = id;
-  confirmModal.style.display = 'block';
-}
-
-btnConfirm.addEventListener('click', async function() {
-  confirmModal.style.display = 'none';
-  if (!idParaExcluir) return;
+async function excluir(id) {
+  const confirmacao = confirm("Tem certeza que deseja excluir este doador?");
+  if (!confirmacao) return;
 
   try {
-    const res = await fetch(`https://doadores-spring.onrender.com/doadores/${idParaExcluir}`, {
+    const res = await fetch(`https://doadores-spring.onrender.com/doadores/${id}`, {
       method: 'DELETE'
     });
 
@@ -312,15 +301,8 @@ btnConfirm.addEventListener('click', async function() {
     }
   } catch (err) {
     alert("Erro de rede ao excluir doador.");
-  } finally {
-    idParaExcluir = null;
   }
-});
-
-btnCancel.addEventListener('click', function() {
-  confirmModal.style.display = 'none';
-  idParaExcluir = null;
-});
+}
 
 async function buscar() {
   const tipo = document.getElementById('tipoSanguineo').value;
@@ -350,16 +332,13 @@ function editar(id) {
   window.location.href = `cadastro.html?id=${id}`;
 }
 
-function excluir(id) {
-  mostrarConfirmacao(id);
-}
-
 document.getElementById('tipoSanguineo').addEventListener('change', buscar);
 document.getElementById('cidade').addEventListener('input', buscar);
 document.getElementById('bairro').addEventListener('input', buscar);
 
 listar();
 </script>
+
 
 
 <div id="confirmModal" class="modal">
