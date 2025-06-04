@@ -34,7 +34,7 @@ header {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	padding: 20px;
+	padding: 10px;
 }
 
 .form-box {
@@ -169,7 +169,28 @@ button:hover {
 .close:hover {
 	color: #000;
 }
+
+
+
+.btn-consultar {
+  width: auto; /* Ajusta ao conteúdo */
+  padding: 10px 20px; /* Espaçamento interno */
+  background: #007bff; /* Azul padrão */
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-consultar:hover {
+  background: #0056b3; /* Azul mais escuro no hover */
+}
 </style>
+
+
 </head>
 <body>
 
@@ -235,141 +256,233 @@ button:hover {
 		<p>Coletamos o seu nome e informações de contato exclusivamente para gerenciar o cadastro de doadores de sangue.</p>
 	</div>
 </div>
+<!-- Botão para consultar cadastros -->
+<div class="container">
+  <button class="btn-consultar" onclick="abrirLogin()">Consultar Cadastros</button>
+</div>
 
+<!-- Modal de Login -->
+<div id="loginModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="fecharLogin()">&times;</span>
+    <h2>Login</h2>
+    <label for="usuario">Usuário:</label>
+    <input type="text" id="usuario" />
+
+    <label for="senha">Senha:</label>
+    <input type="password" id="senha" />
+
+    <button onclick="validarLogin()">Entrar</button>
+  </div>
+</div>
+
+<!-- Modal de Lista de Doadores -->
+<div id="listaModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="fecharLista()">&times;</span>
+    <h2>Lista de Doadores</h2>
+    <ul id="listaDoadores"></ul>
+  </div>
+</div>
 <script>
+
+const BASE_URL = 'https://doadores-spring.onrender.com/doadores';
+
+const loginModal = document.getElementById('loginModal');
+const listaModal = document.getElementById('listaModal');
+const listaDoadores = document.getElementById('listaDoadores');
+const politicaModal = document.getElementById('politicaModal');
+
 const form = document.getElementById('doadorForm');
 const alertMessage = document.getElementById('alertMessage');
 const btnSubmit = document.getElementById('btnSubmit');
 const aceite = document.getElementById('aceite');
-const politicaModal = document.getElementById('politicaModal');
 const formContainer = document.getElementById('formContainer');
 const successContainer = document.getElementById('successContainer');
 
 const urlParams = new URLSearchParams(window.location.search);
 const doadorId = urlParams.get('id');
 
-async function carregarDoador(id) {
-	try {
-		const res = await fetch(`https://doadores-spring.onrender.com/doadores/${id}`);
-		if (!res.ok) {
-			throw new Error('Não foi possível carregar os dados do doador.');
-		}
-		const doador = await res.json();
-
-		// Preenchendo os campos do formulário
-		form.nome.value = doador.nome || '';
-		form.rua.value = doador.rua || '';
-		form.numero.value = doador.numero || '';
-		form.bairro.value = doador.bairro || '';
-		form.cidade.value = doador.cidade || '';
-		form.telefone.value = doador.telefone || '';
-		form.tipoSanguineo.value = doador.tipoSanguineo || '';
-
-	} catch (err) {
-		exibirMensagem(err.message);
-	}
+function abrirLogin() {
+  loginModal.style.display = 'block';
 }
 
+function fecharLogin() {
+  loginModal.style.display = 'none';
+}
 
-if (doadorId) {
-	carregarDoador(doadorId);
-	btnSubmit.textContent = 'Atualizar';
+function fecharLista() {
+  listaModal.style.display = 'none';
 }
 
 function mostrarPolitica() {
-	politicaModal.style.display = 'block';
+  politicaModal.style.display = 'block';
 }
 
 function fecharPolitica() {
-	politicaModal.style.display = 'none';
+  politicaModal.style.display = 'none';
 }
-
-window.addEventListener('click', function(event) {
-	if (event.target === politicaModal) {
-		fecharPolitica();
-	}
-});
 
 function exibirMensagem(texto, tipo = 'error') {
-	alertMessage.textContent = texto;
-	alertMessage.className = 'alert ' + tipo;
-	alertMessage.style.display = 'block';
+  alertMessage.textContent = texto;
+  alertMessage.className = 'alert ' + tipo;
+  alertMessage.style.display = 'block';
 }
 
+async function validarLogin() {
+  const usuario = document.getElementById('usuario').value;
+  const senha = document.getElementById('senha').value;
 
+  if (usuario === 'administrador' && senha === 'admveredinha') {
+    fecharLogin();
+    window.location.href = 'doadores.html';
+  } else {
+    alert('Usuário ou senha incorretos!');
+  }
+}
+
+async function carregarDoadores() {
+  try {
+    listaDoadores.innerHTML = '<li>Carregando...</li>';
+    const res = await fetch(BASE_URL);
+    if (!res.ok) throw new Error('Não foi possível carregar os doadores.');
+
+    const doadores = await res.json();
+    listaDoadores.innerHTML = '';
+
+    if (doadores.length === 0) {
+      listaDoadores.innerHTML = '<li>Nenhum doador cadastrado.</li>';
+    } else {
+      doadores.forEach(doador => {
+        const item = document.createElement('li');
+        item.textContent = `${doador.nome} - ${doador.cidade} - ${doador.tipoSanguineo}`;
+        listaDoadores.appendChild(item);
+      });
+    }
+
+    listaModal.style.display = 'block';
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+async function carregarDoador(id) {
+  try {
+    const res = await fetch(`${BASE_URL}/${id}`);
+    if (!res.ok) throw new Error('Não foi possível carregar os dados do doador.');
+
+    const doador = await res.json();
+    form.nome.value = doador.nome || '';
+    form.rua.value = doador.rua || '';
+    form.numero.value = doador.numero || '';
+    form.bairro.value = doador.bairro || '';
+    form.cidade.value = doador.cidade || '';
+    form.telefone.value = doador.telefone || '';
+    form.tipoSanguineo.value = doador.tipoSanguineo || '';
+  } catch (err) {
+    exibirMensagem(err.message);
+  }
+}
+
+if (doadorId) {
+  carregarDoador(doadorId);
+  btnSubmit.textContent = 'Atualizar';
+}
 
 form.addEventListener('submit', async function(e) {
-	e.preventDefault();
-	if (!aceite.checked) {
-		exibirMensagem('Você deve aceitar a Política de Privacidade para continuar.');
-		return;
-	}
-	btnSubmit.disabled = true;
+  e.preventDefault();
 
-	try {
-		const data = {
-			nome: form.nome.value,
-			rua: form.rua.value,
-			numero: form.numero.value,
-			bairro: form.bairro.value,
-			cidade: form.cidade.value,
-			telefone: form.telefone.value,
-			tipoSanguineo: form.tipoSanguineo.value
-		};
+  if (!aceite.checked) {
+    exibirMensagem('Você deve aceitar a Política de Privacidade para continuar.');
+    return;
+  }
 
-		const url = doadorId ? `https://doadores-spring.onrender.com/doadores/${doadorId}` : 'https://doadores-spring.onrender.com/doadores';
-		const method = doadorId ? 'PUT' : 'POST';
+  if (!form.nome.value || !form.telefone.value || !form.tipoSanguineo.value) {
+    exibirMensagem('Preencha todos os campos obrigatórios.');
+    return;
+  }
 
-		const res = await fetch(url, {
-			method: method,
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(data)
-		});
+  btnSubmit.disabled = true;
 
-		if (res.ok) {
-			formContainer.style.display = 'none';
-			successContainer.style.display = 'flex';
-		} else {
-			const errorData = await res.json();
-			throw new Error(errorData.message || 'Erro ao enviar dados');
-		}
-	} catch (err) {
-		exibirMensagem(err.message);
-		btnSubmit.disabled = false;
-	}
+  try {
+    const data = {
+      nome: form.nome.value,
+      rua: form.rua.value,
+      numero: form.numero.value,
+      bairro: form.bairro.value,
+      cidade: form.cidade.value,
+      telefone: form.telefone.value,
+      tipoSanguineo: form.tipoSanguineo.value
+    };
+
+    const url = doadorId ? `${BASE_URL}/${doadorId}` : BASE_URL;
+    const method = doadorId ? 'PUT' : 'POST';
+
+    const res = await fetch(url, {
+      method: method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    if (res.ok) {
+      window.location.href = 'confirmacao.html';
+    } else {
+      const errorData = await res.json();
+      throw new Error(errorData.message || 'Erro ao enviar dados');
+    }
+  } catch (err) {
+    exibirMensagem(err.message);
+    btnSubmit.disabled = false;
+  }
 });
 
 function novoCadastro() {
-	form.reset();
-	successContainer.style.display = 'none';
-	formContainer.style.display = 'flex';
-	btnSubmit.disabled = false;
-	alertMessage.style.display = 'none';
+  form.reset();
+  successContainer.style.display = 'none';
+  formContainer.style.display = 'flex';
+  btnSubmit.disabled = false;
+  alertMessage.style.display = 'none';
 }
 
 function consultarCadastro() {
-	alert('Funcionalidade de consulta ainda não implementada.');
+  alert('Funcionalidade de consulta ainda não implementada.');
 }
 
+window.addEventListener('click', function(event) {
+  if (event.target === loginModal) fecharLogin();
+  if (event.target === listaModal) fecharLista();
+  if (event.target === politicaModal) fecharPolitica();
+});
+
 window.onload = function() {
-	Inputmask("(99) 99999-9999").mask(document.getElementById('telefone'));
+  Inputmask("(99) 99999-9999").mask(document.getElementById('telefone'));
 };
+
 </script>
 
 <script>
 
 const telefoneInput = document.getElementById('telefone');
+
 telefoneInput.addEventListener('input', function(e) {
-	let value = e.target.value.replace(/\D/g, '');
-	if (value.length > 11) value = value.slice(0, 11);
-	if (value.length <= 10) {
-		value = value.replace(/^(\d{0,2})(\d{0,4})(\d{0,4})$/, (_, ddd, p1, p2) => `${ddd ? `(${ddd}) ` : ''}${p1}${p2 ? `-${p2}` : ''}`);
-	} else {
-		value = value.replace(/^(\d{0,2})(\d{0,5})(\d{0,4})$/, (_, ddd, p1, p2) => `${ddd ? `(${ddd}) ` : ''}${p1}${p2 ? `-${p2}` : ''}`);
-	}
-	e.target.value = value;
+  let value = e.target.value.replace(/\D/g, '');
+  if (value.length > 11) value = value.slice(0, 11);
+  
+  if (value.length <= 10) {
+    value = value.replace(/^(\d{0,2})(\d{0,4})(\d{0,4})$/, (_, ddd, p1, p2) => 
+      `${ddd ? `(${ddd}) ` : ''}${p1}${p2 ? `-${p2}` : ''}`
+    );
+  } else {
+    value = value.replace(/^(\d{0,2})(\d{0,5})(\d{0,4})$/, (_, ddd, p1, p2) => 
+      `${ddd ? `(${ddd}) ` : ''}${p1}${p2 ? `-${p2}` : ''}`
+    );
+  }
+
+  e.target.value = value;
 });
+
 </script>
+
 
 </body>
 </html>
